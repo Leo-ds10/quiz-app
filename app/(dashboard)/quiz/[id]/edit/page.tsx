@@ -39,6 +39,7 @@ export default async function EditQuizPage({ params }: PageProps) {
     maxAttempts: quiz.maxAttempts,
     timeLimitSeconds: quiz.timeLimitSeconds,
     randomizeQuestions: quiz.randomizeQuestions,
+    randomizeAnswers: quiz.randomizeAnswers,
     questions: quiz.questions.map((q) => ({
       id: q.id,
       text: q.text,
