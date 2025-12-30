@@ -66,9 +66,9 @@ export function UserButton({ isAdmin = false }: UserButtonProps) {
               </a>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="cursor-pointer">
-              <Link href="/admin">
+              <Link href="/settings">
                 <Settings className="mr-2 h-4 w-4" />
-                Admin Dashboard
+                Settings
               </Link>
             </DropdownMenuItem>
           </>
