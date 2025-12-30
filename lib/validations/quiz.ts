@@ -9,7 +9,7 @@ export const answerSchema = z.object({
 export const questionSchema = z.object({
   id: z.string().optional(),
   text: z.string().min(1, "Question text is required"),
-  imageUrl: z.string().url().optional().or(z.literal("")),
+  imageUrl: z.url().optional().or(z.literal("")).nullable(),
   answers: z
     .array(answerSchema)
     .min(2, "At least 2 answers are required")
@@ -22,7 +22,7 @@ export const questionSchema = z.object({
 export const quizSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title is too long"),
   description: z.string().max(1000, "Description is too long").optional(),
-  heroImageUrl: z.string().url().optional().or(z.literal("")),
+  heroImageUrl: z.url().optional().or(z.literal("")).nullable(),
   maxAttempts: z.coerce.number().int().min(1, "At least 1 attempt required").default(1),
   timeLimitSeconds: z.coerce.number().int().min(0, "Time limit cannot be negative").default(0),
   randomizeQuestions: z.boolean().default(true),
