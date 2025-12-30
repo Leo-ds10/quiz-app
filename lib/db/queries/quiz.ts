@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
-import { quiz, quizAttempt, user } from "@/lib/db/schema";
+import { quiz, quizAttempt, user, question, answer } from "@/lib/db/schema";
 import type { Quiz, Question, Answer, User, QuizAttempt, AttemptAnswer } from "@/lib/db/schema";
-import { eq, desc, count, sql, and, or, lte, isNull } from "drizzle-orm";
+import { eq, desc, count, sql, and, or, lte, isNull, asc } from "drizzle-orm";
 
 export const ITEMS_PER_PAGE = 30;
 
@@ -89,24 +89,61 @@ export async function getQuizzes(
 
 /**
  * Get a single quiz by ID with all questions and answers
+ * Note: Uses standard queries instead of nested relational queries
+ * to work around a drizzle-orm bug with PostgreSQL (syntax error in lateral joins)
  */
 export async function getQuizById(quizId: string): Promise<QuizWithRelations | undefined> {
+  // Fetch quiz with author
   const quizData = await db.query.quiz.findFirst({
     where: eq(quiz.id, quizId),
     with: {
       author: true,
-      questions: {
-        with: {
-          answers: true,
-        },
-        orderBy: (questions: { order: unknown }, { asc }: { asc: (col: unknown) => unknown }) => [
-          asc(questions.order),
-        ],
-      },
     },
   });
 
-  return quizData as QuizWithRelations | undefined;
+  if (!quizData) {
+    return undefined;
+  }
+
+  // Fetch questions separately
+  const questions = await db
+    .select()
+    .from(question)
+    .where(eq(question.quizId, quizId))
+    .orderBy(asc(question.order));
+
+  // Fetch all answers for these questions in one query
+  const questionIds = questions.map((q: Question) => q.id);
+  const answers =
+    questionIds.length > 0
+      ? await db
+          .select()
+          .from(answer)
+          .where(sql`${answer.questionId} IN ${questionIds}`)
+      : [];
+
+  // Group answers by question ID
+  const answersByQuestionId = answers.reduce(
+    (acc: Record<string, Answer[]>, a: Answer) => {
+      if (!acc[a.questionId]) {
+        acc[a.questionId] = [];
+      }
+      acc[a.questionId].push(a);
+      return acc;
+    },
+    {} as Record<string, Answer[]>,
+  );
+
+  // Combine questions with their answers
+  const questionsWithAnswers = questions.map((q: Question) => ({
+    ...q,
+    answers: answersByQuestionId[q.id] || [],
+  }));
+
+  return {
+    ...quizData,
+    questions: questionsWithAnswers,
+  } as QuizWithRelations;
 }
 
 /**
@@ -223,8 +260,10 @@ export async function getUserAttemptCount(quizId: string, userId: string): Promi
 
 /**
  * Get a specific attempt with all answers
+ * Note: Uses multiple queries to work around drizzle-orm PostgreSQL syntax bug
  */
 export async function getAttemptById(attemptId: string): Promise<AttemptWithRelations | undefined> {
+  // Fetch attempt with quiz, user, and attemptAnswers with their related answer
   const attempt = await db.query.quizAttempt.findFirst({
     where: eq(quizAttempt.id, attemptId),
     with: {
@@ -232,20 +271,73 @@ export async function getAttemptById(attemptId: string): Promise<AttemptWithRela
       user: true,
       answers: {
         with: {
-          question: {
-            with: {
-              answers: true,
-            },
-          },
           answer: true,
         },
         orderBy: (
           answers: { displayOrder: unknown },
-          { asc }: { asc: (col: unknown) => unknown },
-        ) => [asc(answers.displayOrder)],
+          { asc: ascFn }: { asc: (col: unknown) => unknown },
+        ) => [ascFn(answers.displayOrder)],
       },
     },
   });
 
-  return attempt as AttemptWithRelations | undefined;
+  if (!attempt) {
+    return undefined;
+  }
+
+  // Fetch questions with answers separately
+  const questionIds = attempt.answers.map((a: { questionId: string }) => a.questionId);
+  const questions =
+    questionIds.length > 0
+      ? await db
+          .select()
+          .from(question)
+          .where(sql`${question.id} IN ${questionIds}`)
+      : [];
+
+  // Fetch all answers for these questions
+  const allAnswers =
+    questionIds.length > 0
+      ? await db
+          .select()
+          .from(answer)
+          .where(sql`${answer.questionId} IN ${questionIds}`)
+      : [];
+
+  // Group answers by question ID
+  const answersByQuestionId = allAnswers.reduce(
+    (acc: Record<string, Answer[]>, a: Answer) => {
+      if (!acc[a.questionId]) {
+        acc[a.questionId] = [];
+      }
+      acc[a.questionId].push(a);
+      return acc;
+    },
+    {} as Record<string, Answer[]>,
+  );
+
+  // Build questions with answers map
+  const questionsWithAnswers = questions.reduce(
+    (acc: Record<string, Question & { answers: Answer[] }>, q: Question) => {
+      acc[q.id] = {
+        ...q,
+        answers: answersByQuestionId[q.id] || [],
+      };
+      return acc;
+    },
+    {} as Record<string, Question & { answers: Answer[] }>,
+  );
+
+  // Combine attempt answers with their questions
+  const enrichedAnswers = attempt.answers.map(
+    (a: { questionId: string; answer: Answer | null }) => ({
+      ...a,
+      question: questionsWithAnswers[a.questionId] || null,
+    }),
+  );
+
+  return {
+    ...attempt,
+    answers: enrichedAnswers,
+  } as AttemptWithRelations;
 }

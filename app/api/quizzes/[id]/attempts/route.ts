@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { quiz, quizAttempt, attemptAnswer } from "@/lib/db/schema";
+import { quiz, quizAttempt, attemptAnswer, question, answer } from "@/lib/db/schema";
 import type { Question, Answer } from "@/lib/db/schema";
 import { getApiContext, requirePermission, errorResponse, API_SCOPES } from "@/lib/auth/api";
-import { eq, and, count, desc } from "drizzle-orm";
+import { eq, and, count, desc, sql, asc } from "drizzle-orm";
 import { z } from "zod";
 
 interface RouteParams {
@@ -102,20 +102,55 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   const data = parsed.data;
 
   // Get quiz to check max attempts
+  // Note: Uses multiple queries to work around drizzle-orm PostgreSQL syntax bug
   const quizData = await db.query.quiz.findFirst({
     where: eq(quiz.id, quizId),
-    with: {
-      questions: {
-        with: {
-          answers: true,
-        },
-      },
-    },
   });
 
   if (!quizData) {
     return errorResponse("Quiz not found", 404);
   }
+
+  // Fetch questions separately
+  const questions = await db
+    .select()
+    .from(question)
+    .where(eq(question.quizId, quizId))
+    .orderBy(asc(question.order));
+
+  // Fetch all answers for these questions in one query
+  const questionIds = questions.map((q: Question) => q.id);
+  const allAnswers =
+    questionIds.length > 0
+      ? await db
+          .select()
+          .from(answer)
+          .where(sql`${answer.questionId} IN ${questionIds}`)
+      : [];
+
+  // Group answers by question ID
+  const answersByQuestionId = allAnswers.reduce(
+    (acc: Record<string, Answer[]>, a: Answer) => {
+      if (!acc[a.questionId]) {
+        acc[a.questionId] = [];
+      }
+      acc[a.questionId].push(a);
+      return acc;
+    },
+    {} as Record<string, Answer[]>,
+  );
+
+  // Build questions with answers
+  const questionsWithAnswers = questions.map((q: Question) => ({
+    ...q,
+    answers: answersByQuestionId[q.id] || [],
+  }));
+
+  // Create a quiz-like object with questions
+  const quizWithQuestions = {
+    ...quizData,
+    questions: questionsWithAnswers,
+  };
 
   // Check attempt count
   const [{ attemptCount }] = await db
@@ -123,7 +158,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     .from(quizAttempt)
     .where(and(eq(quizAttempt.quizId, quizId), eq(quizAttempt.userId, ctx!.user.id)));
 
-  if (attemptCount >= quizData.maxAttempts) {
+  if (attemptCount >= quizWithQuestions.maxAttempts) {
     return errorResponse("Maximum attempts reached", 400);
   }
 
@@ -137,11 +172,15 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   }[] = [];
 
   for (const submittedAnswer of data.answers) {
-    const question = quizData.questions.find((q: Question) => q.id === submittedAnswer.questionId);
+    const questionItem = quizWithQuestions.questions.find(
+      (q: Question) => q.id === submittedAnswer.questionId,
+    );
 
-    if (!question) continue;
+    if (!questionItem) continue;
 
-    const selectedAnswer = question.answers.find((a: Answer) => a.id === submittedAnswer.answerId);
+    const selectedAnswer = questionItem.answers.find(
+      (a: Answer) => a.id === submittedAnswer.answerId,
+    );
 
     const isCorrect = selectedAnswer?.isCorrect ?? false;
     if (isCorrect) correctCount++;
@@ -162,7 +201,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         quizId,
         userId: ctx!.user.id,
         correctCount,
-        totalQuestions: quizData.questions.length,
+        totalQuestions: quizWithQuestions.questions.length,
         totalTimeMs: data.totalTimeMs,
         timedOut: data.timedOut,
       })
