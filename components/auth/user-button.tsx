@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LogOut, Settings } from "lucide-react";
+import { Book, LogOut, Settings } from "lucide-react";
 import { useSession, signOut } from "@/lib/auth/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -58,12 +58,20 @@ export function UserButton({ isAdmin = false }: UserButtonProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {isAdmin && (
-          <DropdownMenuItem asChild className="cursor-pointer">
-            <Link href="/settings">
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
-            </Link>
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/docs">
+                <Book className="mr-2 h-4 w-4" />
+                API Docs
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/admin">
+                <Settings className="mr-2 h-4 w-4" />
+                Admin Dashboard
+              </Link>
+            </DropdownMenuItem>
+          </>
         )}
         <DropdownMenuItem
           onClick={() =>

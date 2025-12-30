@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/layout/theme-provider";
+import { siteConfig } from "@/lib/config";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Quiz App",
-  description: "Test your knowledge with interactive quizzes",
+  title: siteConfig.name,
+  description: siteConfig.description,
   icons: {
     icon: [
       { url: "/icon_light.svg", media: "(prefers-color-scheme: light)" },
