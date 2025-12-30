@@ -33,10 +33,7 @@ export async function getQuizzes(
     : or(isNull(quiz.publishedAt), lte(quiz.publishedAt, new Date()));
 
   // Get total count
-  const [{ total }] = await db
-    .select({ total: count() })
-    .from(quiz)
-    .where(publishedFilter);
+  const [{ total }] = await db.select({ total: count() }).from(quiz).where(publishedFilter);
 
   // Get quizzes with question count and author
   const quizzes = await db

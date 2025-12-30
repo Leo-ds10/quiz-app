@@ -34,7 +34,7 @@ export function QuizCard({ quiz }: QuizCardProps) {
           <Image src={quiz.heroImageUrl} alt={quiz.title} fill className="object-cover" />
         </div>
       )}
-      <CardHeader className="pt-6 flex-1 ">
+      <CardHeader className="flex-1 pt-6">
         <CardTitle className="line-clamp-2">{quiz.title}</CardTitle>
         {quiz.description && (
           <CardDescription className="line-clamp-2">{quiz.description}</CardDescription>
@@ -71,7 +71,7 @@ export function QuizCard({ quiz }: QuizCardProps) {
         </div>
       </CardContent>
       <CardFooter>
-        <Button asChild className="w-full mb-6">
+        <Button asChild className="mb-6 w-full">
           <Link href={`/quiz/${quiz.id}`}>View Quiz</Link>
         </Button>
       </CardFooter>
