@@ -4,15 +4,29 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth/server";
 import { canManageQuizzes } from "@/lib/auth/permissions";
 import { getQuizzes } from "@/lib/db/queries/quiz";
+import { dialect } from "@/lib/db";
+import { checkDatabaseHealth } from "@/lib/db/health";
 import { Button } from "@/components/ui/button";
 import { QuizCard } from "@/components/quiz/quiz-card";
 import { PaginationControls } from "@/components/layout/pagination-controls";
+import { DatabaseError } from "@/components/errors/database-error";
 
 interface PageProps {
   searchParams: Promise<{ page?: string }>;
 }
 
 export default async function HomePage({ searchParams }: PageProps) {
+  // Check database health first before any queries
+  const dbHealth = await checkDatabaseHealth();
+  if (!dbHealth.connected) {
+    return (
+      <DatabaseError
+        message={dbHealth.error || "Unable to connect to database"}
+        dialect={dialect}
+      />
+    );
+  }
+
   const params = await searchParams;
   const page = parseInt(params.page ?? "1", 10);
 

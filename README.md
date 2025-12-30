@@ -69,11 +69,11 @@ The app supports both SQLite (default) and PostgreSQL. Set the `DB_DIALECT` envi
 
 ```bash
 # No additional setup needed, just push the schema
-bun run db:push
+bun --bun run db:push
 
 # Or use migrations
-bun run db:generate
-bun run db:migrate
+bun --bun run db:generate
+bun --bun run db:migrate
 ```
 
 #### PostgreSQL
@@ -84,15 +84,15 @@ export DB_DIALECT=postgres
 export DATABASE_URL=postgresql://user:password@localhost:5432/quiz_app
 
 # Generate and run migrations
-bun run db:generate
-bun run db:migrate
+bun --bun run db:generate
+bun --bun run db:migrate
 ```
 
 ### Development
 
 ```bash
 # Start development server
-bun run dev
+bun --bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -101,10 +101,10 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ```bash
 # Build for production
-bun run build
+bun --bun run build
 
 # Start production server
-bun run start
+bun --bun run start
 ```
 
 ## Project Structure
@@ -201,21 +201,21 @@ All endpoints return consistent error responses:
 
 ## Scripts
 
-| Command                | Description                         |
-| ---------------------- | ----------------------------------- |
-| `bun run dev`          | Start development server            |
-| `bun run build`        | Build for production                |
-| `bun run start`        | Start production server             |
-| `bun run tsc`          | TypeScript type checking            |
-| `bun run lint`         | Run ESLint                          |
-| `bun run format`       | Format code with Prettier           |
-| `bun run format:check` | Check code formatting with Prettier |
-| `bun run stylelint`    | Run Stylelint for CSS files         |
-| `bun run db:push`      | Push schema changes to database     |
-| `bun run db:generate`  | Generate migration files            |
-| `bun run db:migrate`   | Run migrations                      |
-| `bun run db:studio`    | Open Drizzle Studio                 |
-| `bun test`             | Run tests                           |
+| Command                      | Description                         |
+| ---------------------------- | ----------------------------------- |
+| `bun --bun run dev`          | Start development server            |
+| `bun --bun run build`        | Build for production                |
+| `bun --bun run start`        | Start production server             |
+| `bun --bun run tsc`          | TypeScript type checking            |
+| `bun --bun run lint`         | Run ESLint                          |
+| `bun --bun run format`       | Format code with Prettier           |
+| `bun --bun run format:check` | Check code formatting with Prettier |
+| `bun --bun run stylelint`    | Run Stylelint for CSS files         |
+| `bun --bun run db:push`      | Push schema changes to database     |
+| `bun --bun run db:generate`  | Generate migration files            |
+| `bun --bun run db:migrate`   | Run migrations                      |
+| `bun --bun run db:studio`    | Open Drizzle Studio                 |
+| `bun test`                   | Run tests                           |
 
 ## License
 

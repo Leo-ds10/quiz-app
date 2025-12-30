@@ -3,8 +3,20 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth/server";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { checkDatabaseHealth } from "@/lib/db/health";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  // Check database health first - if DB is down, render children directly
+  // (the page will handle showing the error UI)
+  const dbHealth = await checkDatabaseHealth();
+  if (!dbHealth.connected) {
+    return (
+      <div className="relative flex min-h-screen flex-col">
+        <main className="mx-auto w-full max-w-7xl px-4 py-6">{children}</main>
+      </div>
+    );
+  }
+
   const session = await auth.api.getSession({
     headers: await headers(),
   });

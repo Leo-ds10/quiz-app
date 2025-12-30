@@ -175,7 +175,7 @@ export async function getGlobalLeaderboard(page: number = 1, limit: number = ITE
     })
     .from(quizAttempt)
     .innerJoin(user, eq(quizAttempt.userId, user.id))
-    .groupBy(quizAttempt.userId)
+    .groupBy(quizAttempt.userId, user.id)
     .orderBy(sql`SUM(${quizAttempt.correctCount}) DESC`, sql`SUM(${quizAttempt.totalTimeMs}) ASC`)
     .limit(limit)
     .offset(offset);
