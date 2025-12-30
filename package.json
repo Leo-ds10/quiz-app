@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "bun run --bun next dev --turbopack",
-    "build": "bun run --bun next build",
+    "build": "bun run --bun db:migrate:prod && bun run --bun next build",
+    "build:only": "bun run --bun next build",
     "start": "bun run --bun next start",
     "tsc": "bun run --bun tsc --noEmit",
     "lint": "bun run --bun eslint",
@@ -14,6 +15,7 @@
     "db:generate": "bun run --bun drizzle-kit generate",
     "db:push": "bun run --bun drizzle-kit push",
     "db:migrate": "bun run --bun drizzle-kit migrate --config=drizzle.config.ts",
+    "db:migrate:prod": "DB_DIALECT=postgres bun run --bun ./lib/db/migrate.ts",
     "db:studio": "bun run --bun drizzle-kit studio",
     "test": "bun test"
   },
