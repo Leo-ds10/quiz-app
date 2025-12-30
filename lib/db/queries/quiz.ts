@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { quiz, question, answer, quizAttempt, user } from "@/lib/db/schema";
-import { eq, desc, count, sql, and } from "drizzle-orm";
+import { eq, desc, count, sql, and, or, lte, isNull } from "drizzle-orm";
 
 export const ITEMS_PER_PAGE = 30;
 
@@ -14,10 +14,12 @@ export interface PaginatedResult<T> {
 
 /**
  * Get paginated quizzes ordered by creation date (newest first)
+ * If isAdmin is false, only shows quizzes where publishedAt is null or in the past
  */
 export async function getQuizzes(
   page: number = 1,
   limit: number = ITEMS_PER_PAGE,
+  isAdmin: boolean = false,
 ): Promise<
   PaginatedResult<
     typeof quiz.$inferSelect & { questionCount: number; author: typeof user.$inferSelect | null }
@@ -25,8 +27,16 @@ export async function getQuizzes(
 > {
   const offset = (page - 1) * limit;
 
+  // Build where clause for non-admins: only show published quizzes
+  const publishedFilter = isAdmin
+    ? undefined
+    : or(isNull(quiz.publishedAt), lte(quiz.publishedAt, new Date()));
+
   // Get total count
-  const [{ total }] = await db.select({ total: count() }).from(quiz);
+  const [{ total }] = await db
+    .select({ total: count() })
+    .from(quiz)
+    .where(publishedFilter);
 
   // Get quizzes with question count and author
   const quizzes = await db
@@ -37,6 +47,7 @@ export async function getQuizzes(
     })
     .from(quiz)
     .leftJoin(user, eq(quiz.authorId, user.id))
+    .where(publishedFilter)
     .orderBy(desc(quiz.createdAt))
     .limit(limit)
     .offset(offset);

@@ -110,6 +110,7 @@ export const openApiSpec = {
           timeLimitSeconds: { type: "integer", minimum: 0, description: "0 = unlimited" },
           randomizeQuestions: { type: "boolean" },
           randomizeAnswers: { type: "boolean" },
+          publishedAt: { type: "string", format: "date-time", nullable: true, description: "Publication date. If in the future, won't be displayed to users." },
           createdAt: { type: "string", format: "date-time" },
           updatedAt: { type: "string", format: "date-time" },
         },
@@ -151,6 +152,7 @@ export const openApiSpec = {
           timeLimitSeconds: { type: "integer", minimum: 0, default: 0 },
           randomizeQuestions: { type: "boolean", default: true },
           randomizeAnswers: { type: "boolean", default: true },
+          publishedAt: { type: "string", format: "date-time", nullable: true, description: "Publication date. If in the future, won't be displayed to users." },
           questions: {
             type: "array",
             items: { $ref: "#/components/schemas/QuestionInput" },

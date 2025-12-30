@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Clock, HelpCircle, User } from "lucide-react";
+import { Calendar, Clock, HelpCircle, User } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -34,14 +34,12 @@ export function QuizCard({ quiz }: QuizCardProps) {
           <Image src={quiz.heroImageUrl} alt={quiz.title} fill className="object-cover" />
         </div>
       )}
-      {!quiz.heroImageUrl && (
-        <CardHeader className="pt-6 flex-1 ">
-          <CardTitle className="line-clamp-2">{quiz.title}</CardTitle>
-          {quiz.description && (
-            <CardDescription className="line-clamp-2">{quiz.description}</CardDescription>
-          )}
-        </CardHeader>
-      )}
+      <CardHeader className="pt-6 flex-1 ">
+        <CardTitle className="line-clamp-2">{quiz.title}</CardTitle>
+        {quiz.description && (
+          <CardDescription className="line-clamp-2">{quiz.description}</CardDescription>
+        )}
+      </CardHeader>
       <CardContent className="space-y-2">
         <div className="text-muted-foreground flex items-center gap-4 text-sm">
           <span className="flex items-center gap-1">
@@ -57,6 +55,12 @@ export function QuizCard({ quiz }: QuizCardProps) {
           <div className="text-muted-foreground flex items-center gap-1 text-sm">
             <User className="h-4 w-4" />
             {quiz.author.displayName || quiz.author.name || "Unknown"}
+          </div>
+        )}
+        {quiz.publishedAt && (
+          <div className="text-muted-foreground flex items-center gap-1 text-sm">
+            <Calendar className="h-4 w-4" />
+            {quiz.publishedAt.toLocaleDateString()}
           </div>
         )}
         <div className="flex gap-2">

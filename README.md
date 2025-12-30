@@ -194,6 +194,7 @@ GET /api/quizzes
       "timeLimitSeconds": 300,
       "randomizeQuestions": true,
       "randomizeAnswers": true,
+      "publishedAt": "2025-01-01T00:00:00.000Z",
       "createdAt": "2025-01-01T00:00:00.000Z",
       "updatedAt": "2025-01-01T00:00:00.000Z",
       "questionCount": 10,
@@ -234,6 +235,7 @@ GET /api/quizzes/:id
   "timeLimitSeconds": 300,
   "randomizeQuestions": true,
   "randomizeAnswers": true,
+  "publishedAt": "2025-01-01T00:00:00.000Z",
   "createdAt": "2025-01-01T00:00:00.000Z",
   "updatedAt": "2025-01-01T00:00:00.000Z",
   "author": { ... },
@@ -274,6 +276,7 @@ POST /api/quizzes
   "timeLimitSeconds": 300,
   "randomizeQuestions": true,
   "randomizeAnswers": true,
+  "publishedAt": "2025-01-01T00:00:00.000Z",
   "questions": [
     {
       "text": "What does HTML stand for?",

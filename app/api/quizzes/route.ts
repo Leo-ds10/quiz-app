@@ -72,6 +72,7 @@ export async function POST(request: NextRequest) {
         timeLimitSeconds: validData.timeLimitSeconds,
         randomizeQuestions: validData.randomizeQuestions,
         randomizeAnswers: validData.randomizeAnswers,
+        publishedAt: validData.publishedAt || null,
       })
       .returning();
 

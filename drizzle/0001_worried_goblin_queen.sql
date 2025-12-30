@@ -1,0 +1,1 @@
+ALTER TABLE `quiz` ADD `published_at` integer;

@@ -134,6 +134,7 @@ export const quiz = sqliteTable("quiz", {
   timeLimitSeconds: integer("time_limit_seconds").notNull().default(0), // 0 = unlimited
   randomizeQuestions: integer("randomize_questions", { mode: "boolean" }).notNull().default(true),
   randomizeAnswers: integer("randomize_answers", { mode: "boolean" }).notNull().default(true),
+  publishedAt: integer("published_at", { mode: "timestamp" }),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),

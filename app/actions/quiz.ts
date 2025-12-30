@@ -50,6 +50,8 @@ export async function createQuiz(data: QuizFormData) {
         maxAttempts: validData.maxAttempts,
         timeLimitSeconds: validData.timeLimitSeconds,
         randomizeQuestions: validData.randomizeQuestions,
+        randomizeAnswers: validData.randomizeAnswers,
+        publishedAt: validData.publishedAt || null,
       })
       .returning();
 
@@ -129,6 +131,8 @@ export async function updateQuiz(quizId: string, data: QuizFormData) {
         maxAttempts: validData.maxAttempts,
         timeLimitSeconds: validData.timeLimitSeconds,
         randomizeQuestions: validData.randomizeQuestions,
+        randomizeAnswers: validData.randomizeAnswers,
+        publishedAt: validData.publishedAt || null,
         updatedAt: new Date(),
       })
       .where(eq(quiz.id, quizId));

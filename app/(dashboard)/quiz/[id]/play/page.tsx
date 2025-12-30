@@ -1,6 +1,7 @@
 import { redirect, notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth/server";
+import { canManageQuizzes } from "@/lib/auth/permissions";
 import { getQuizById, getUserAttemptCount } from "@/lib/db/queries/quiz";
 import { QuizPlayer } from "@/components/quiz/quiz-player";
 import { submitQuizAttempt } from "@/app/actions/attempt";
@@ -32,6 +33,11 @@ export default async function PlayQuizPage({ params }: PageProps) {
   const quiz = await getQuizById(id);
 
   if (!quiz) {
+    notFound();
+  }
+
+  // Non-admins cannot play unpublished quizzes (publishedAt in the future)
+  if (!canManageQuizzes(session.user) && quiz.publishedAt && quiz.publishedAt > new Date()) {
     notFound();
   }
 

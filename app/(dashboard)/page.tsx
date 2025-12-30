@@ -20,8 +20,8 @@ export default async function HomePage({ searchParams }: PageProps) {
     headers: await headers(),
   });
 
-  const canCreate = canManageQuizzes(session?.user);
-  const { items: quizzes, totalPages, currentPage } = await getQuizzes(page);
+  const isAdmin = canManageQuizzes(session?.user);
+  const { items: quizzes, totalPages, currentPage } = await getQuizzes(page, 30, isAdmin);
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
@@ -32,7 +32,7 @@ export default async function HomePage({ searchParams }: PageProps) {
             Test your knowledge with our collection of quizzes
           </p>
         </div>
-        {canCreate && (
+        {isAdmin && (
           <Button asChild>
             <Link href="/quiz/new">
               <Plus className="mr-2 h-4 w-4" />
@@ -45,7 +45,7 @@ export default async function HomePage({ searchParams }: PageProps) {
       {quizzes.length === 0 ? (
         <div className="py-12 text-center">
           <p className="text-muted-foreground text-lg">No quizzes available yet.</p>
-          {canCreate && (
+          {isAdmin && (
             <Button asChild className="mt-4">
               <Link href="/quiz/new">Create the first quiz</Link>
             </Button>

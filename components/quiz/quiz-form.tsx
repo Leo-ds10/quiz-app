@@ -41,6 +41,7 @@ export function QuizForm({ initialData, onSubmit, submitLabel = "Create Quiz" }:
     timeLimitSeconds: initialData?.timeLimitSeconds ?? 0,
     randomizeQuestions: initialData?.randomizeQuestions ?? true,
     randomizeAnswers: initialData?.randomizeAnswers ?? true,
+    publishedAt: initialData?.publishedAt ?? null,
     questions: initialData?.questions ?? [{ ...defaultQuestion }],
   });
 
@@ -188,6 +189,17 @@ export function QuizForm({ initialData, onSubmit, submitLabel = "Create Quiz" }:
               onCheckedChange={(checked) => updateField("randomizeAnswers", checked)}
             />
             <Label htmlFor="randomizeAnswers">Randomize answer order</Label>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="publishedAt">Published Date (optional)</Label>
+            <Input
+              id="publishedAt"
+              type="datetime-local"
+              value={formData.publishedAt ? new Date(formData.publishedAt).toISOString().slice(0, 16) : ""}
+              onChange={(e) => updateField("publishedAt", e.target.value ? new Date(e.target.value) : null)}
+            />
+            <p className="text-muted-foreground text-sm">If set to a future date, the published date won&apos;t be displayed until then.</p>
           </div>
         </CardContent>
       </Card>

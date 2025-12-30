@@ -2,9 +2,9 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { headers } from "next/headers";
-import { Clock, HelpCircle, Play, Pencil, Trash2, Users } from "lucide-react";
+import { Calendar, Clock, HelpCircle, Play, Pencil, Trash2, Users } from "lucide-react";
 import { auth } from "@/lib/auth/server";
-import { canEditQuiz } from "@/lib/auth/permissions";
+import { canEditQuiz, canManageQuizzes } from "@/lib/auth/permissions";
 import { getQuizById, getQuizLeaderboard, getUserAttemptCount } from "@/lib/db/queries/quiz";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +31,13 @@ export default async function QuizDetailPage({ params, searchParams }: PageProps
   const quiz = await getQuizById(id);
 
   if (!quiz) {
+    notFound();
+  }
+
+  const isAdmin = canManageQuizzes(session?.user);
+
+  // Non-admins cannot view unpublished quizzes (publishedAt in the future)
+  if (!isAdmin && quiz.publishedAt && quiz.publishedAt > new Date()) {
     notFound();
   }
 
@@ -84,6 +91,12 @@ export default async function QuizDetailPage({ params, searchParams }: PageProps
                 {quiz.maxAttempts} {quiz.maxAttempts === 1 ? "attempt" : "attempts"}
               </Badge>
               {quiz.randomizeQuestions && <Badge variant="outline">Randomized</Badge>}
+              {quiz.publishedAt && (
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  {quiz.publishedAt.toLocaleDateString()}
+                </Badge>
+              )}
             </div>
           </div>
 
