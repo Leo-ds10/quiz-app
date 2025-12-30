@@ -17,14 +17,16 @@ export interface PaginatedResult<T> {
  */
 export async function getQuizzes(
   page: number = 1,
-  limit: number = ITEMS_PER_PAGE
-): Promise<PaginatedResult<typeof quiz.$inferSelect & { questionCount: number; author: typeof user.$inferSelect | null }>> {
+  limit: number = ITEMS_PER_PAGE,
+): Promise<
+  PaginatedResult<
+    typeof quiz.$inferSelect & { questionCount: number; author: typeof user.$inferSelect | null }
+  >
+> {
   const offset = (page - 1) * limit;
 
   // Get total count
-  const [{ total }] = await db
-    .select({ total: count() })
-    .from(quiz);
+  const [{ total }] = await db.select({ total: count() }).from(quiz);
 
   // Get quizzes with question count and author
   const quizzes = await db
@@ -82,7 +84,7 @@ export async function getQuizById(quizId: string) {
 export async function getQuizLeaderboard(
   quizId: string,
   page: number = 1,
-  limit: number = ITEMS_PER_PAGE
+  limit: number = ITEMS_PER_PAGE,
 ) {
   const offset = (page - 1) * limit;
 
@@ -123,10 +125,7 @@ export async function getQuizLeaderboard(
 /**
  * Get global leaderboard (sum of correct answers across all quizzes)
  */
-export async function getGlobalLeaderboard(
-  page: number = 1,
-  limit: number = ITEMS_PER_PAGE
-) {
+export async function getGlobalLeaderboard(page: number = 1, limit: number = ITEMS_PER_PAGE) {
   const offset = (page - 1) * limit;
 
   // Get total unique users with attempts
@@ -171,10 +170,7 @@ export async function getGlobalLeaderboard(
 /**
  * Get user's attempt count for a specific quiz
  */
-export async function getUserAttemptCount(
-  quizId: string,
-  userId: string
-): Promise<number> {
+export async function getUserAttemptCount(quizId: string, userId: string): Promise<number> {
   const [{ attemptCount }] = await db
     .select({ attemptCount: count() })
     .from(quizAttempt)

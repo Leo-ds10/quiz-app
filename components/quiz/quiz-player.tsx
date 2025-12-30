@@ -61,9 +61,7 @@ export function QuizPlayer({
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
   const hasTimeLimit = timeLimitSeconds > 0;
-  const timeRemainingMs = hasTimeLimit
-    ? Math.max(0, timeLimitSeconds * 1000 - elapsedMs)
-    : null;
+  const timeRemainingMs = hasTimeLimit ? Math.max(0, timeLimitSeconds * 1000 - elapsedMs) : null;
   const isTimedOut = hasTimeLimit && timeRemainingMs === 0;
 
   // Timer effect
@@ -92,9 +90,7 @@ export function QuizPlayer({
   const handleConfirmAnswer = () => {
     if (!currentSelection) return;
 
-    const selectedAnswer = currentQuestion.answers.find(
-      (a) => a.id === currentSelection
-    );
+    const selectedAnswer = currentQuestion.answers.find((a) => a.id === currentSelection);
     const correct = selectedAnswer?.isCorrect ?? false;
 
     setIsCorrect(correct);
@@ -153,12 +149,12 @@ export function QuizPlayer({
   const correctAnswer = currentQuestion.answers.find((a) => a.isCorrect);
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="mx-auto max-w-2xl space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold">{quizTitle}</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Question {currentQuestionIndex + 1} of {questions.length}
           </p>
         </div>
@@ -166,15 +162,15 @@ export function QuizPlayer({
           {hasTimeLimit && (
             <Badge
               variant={timeRemainingMs! < 30000 ? "destructive" : "secondary"}
-              className="text-lg px-3 py-1"
+              className="px-3 py-1 text-lg"
             >
-              <Clock className="h-4 w-4 mr-1" />
+              <Clock className="mr-1 h-4 w-4" />
               {formatTime(timeRemainingMs!)}
             </Badge>
           )}
           {!hasTimeLimit && (
-            <Badge variant="secondary" className="text-lg px-3 py-1">
-              <Clock className="h-4 w-4 mr-1" />
+            <Badge variant="secondary" className="px-3 py-1 text-lg">
+              <Clock className="mr-1 h-4 w-4" />
               {formatTime(elapsedMs)}
             </Badge>
           )}
@@ -182,10 +178,7 @@ export function QuizPlayer({
       </div>
 
       {/* Progress */}
-      <Progress
-        value={((currentQuestionIndex + 1) / questions.length) * 100}
-        className="h-2"
-      />
+      <Progress value={((currentQuestionIndex + 1) / questions.length) * 100} className="h-2" />
 
       {error && (
         <Alert variant="destructive">
@@ -200,7 +193,7 @@ export function QuizPlayer({
         </CardHeader>
         <CardContent className="space-y-4">
           {currentQuestion.imageUrl && (
-            <div className="relative aspect-video w-full rounded-lg overflow-hidden">
+            <div className="relative aspect-video w-full overflow-hidden rounded-lg">
               <Image
                 src={currentQuestion.imageUrl}
                 alt="Question image"
@@ -231,18 +224,13 @@ export function QuizPlayer({
                   className += "opacity-50";
                 }
               } else {
-                className += isSelected
-                  ? "border-primary bg-primary/5"
-                  : "hover:border-primary/50";
+                className += isSelected ? "border-primary bg-primary/5" : "hover:border-primary/50";
               }
 
               return (
                 <div key={answer.id} className={className}>
                   <RadioGroupItem value={answer.id} id={answer.id} />
-                  <Label
-                    htmlFor={answer.id}
-                    className="flex-1 cursor-pointer font-normal"
-                  >
+                  <Label htmlFor={answer.id} className="flex-1 cursor-pointer font-normal">
                     {answer.text}
                   </Label>
                   {showCorrectness && answer.isCorrect && (
@@ -259,16 +247,10 @@ export function QuizPlayer({
           {/* Feedback */}
           {showFeedback && (
             <Alert variant={isCorrect ? "default" : "destructive"}>
-              {isCorrect ? (
-                <CheckCircle className="h-4 w-4" />
-              ) : (
-                <XCircle className="h-4 w-4" />
-              )}
+              {isCorrect ? <CheckCircle className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
               <AlertTitle>{isCorrect ? "Correct!" : "Incorrect"}</AlertTitle>
               {!isCorrect && correctAnswer && (
-                <AlertDescription>
-                  The correct answer was: {correctAnswer.text}
-                </AlertDescription>
+                <AlertDescription>The correct answer was: {correctAnswer.text}</AlertDescription>
               )}
             </Alert>
           )}
@@ -276,17 +258,12 @@ export function QuizPlayer({
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-4">
             {!showFeedback ? (
-              <Button
-                onClick={handleConfirmAnswer}
-                disabled={!currentSelection || isSubmitting}
-              >
+              <Button onClick={handleConfirmAnswer} disabled={!currentSelection || isSubmitting}>
                 Confirm Answer
               </Button>
             ) : (
               <Button onClick={handleNext} disabled={isSubmitting}>
-                {isSubmitting && (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                )}
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLastQuestion ? "Finish Quiz" : "Next Question"}
               </Button>
             )}

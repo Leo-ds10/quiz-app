@@ -42,7 +42,7 @@ export function QuizLeaderboard({ entries, currentUserId }: QuizLeaderboardProps
       case 3:
         return <Medal className="h-5 w-5 text-amber-600" />;
       default:
-        return <span className="w-5 text-center text-muted-foreground">{rank}</span>;
+        return <span className="text-muted-foreground w-5 text-center">{rank}</span>;
     }
   };
 
@@ -61,7 +61,7 @@ export function QuizLeaderboard({ entries, currentUserId }: QuizLeaderboardProps
 
   if (entries.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
+      <div className="text-muted-foreground py-8 text-center">
         No attempts yet. Be the first to play!
       </div>
     );
@@ -93,9 +93,7 @@ export function QuizLeaderboard({ entries, currentUserId }: QuizLeaderboardProps
                     <AvatarFallback>{getInitials(entry.user)}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <span className="font-medium">
-                      {entry.user.displayName || entry.user.name}
-                    </span>
+                    <span className="font-medium">{entry.user.displayName || entry.user.name}</span>
                     {isCurrentUser && (
                       <Badge variant="secondary" className="ml-2 text-xs">
                         You
@@ -114,7 +112,7 @@ export function QuizLeaderboard({ entries, currentUserId }: QuizLeaderboardProps
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-1">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <Clock className="text-muted-foreground h-4 w-4" />
                   {formatTime(entry.totalTimeMs)}
                   {entry.timedOut && (
                     <Badge variant="destructive" className="ml-1 text-xs">

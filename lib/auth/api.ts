@@ -78,10 +78,12 @@ export async function getApiContext(): Promise<ApiContext | null> {
   // Session-based auth gets full permissions based on user role
   // Check if user is admin to determine permissions
   const isAdmin = checkIsAdmin(session.user);
-  
+
   return {
     user: session.user,
-    permissions: isAdmin ? ALL_API_SCOPES : [API_SCOPES.QUIZZES_READ, API_SCOPES.ATTEMPTS_READ, API_SCOPES.ATTEMPTS_WRITE],
+    permissions: isAdmin
+      ? ALL_API_SCOPES
+      : [API_SCOPES.QUIZZES_READ, API_SCOPES.ATTEMPTS_READ, API_SCOPES.ATTEMPTS_WRITE],
     isApiKey: false,
   };
 }
@@ -107,19 +109,19 @@ function checkIsAdmin(user: User): boolean {
  */
 function parsePermissions(permissions: unknown): ApiScope[] {
   if (!permissions) return [];
-  
+
   // BetterAuth stores permissions as an object like { "quizzes": ["read", "write"] }
   // or as an array of strings like ["quizzes:read", "quizzes:write"]
   if (Array.isArray(permissions)) {
-    return permissions.filter((p): p is ApiScope => 
-      typeof p === "string" && ALL_API_SCOPES.includes(p as ApiScope)
+    return permissions.filter(
+      (p): p is ApiScope => typeof p === "string" && ALL_API_SCOPES.includes(p as ApiScope),
     );
   }
-  
+
   if (typeof permissions === "object" && permissions !== null) {
     const perms: ApiScope[] = [];
     const permObj = permissions as Record<string, string[]>;
-    
+
     for (const [resource, actions] of Object.entries(permObj)) {
       if (Array.isArray(actions)) {
         for (const action of actions) {
@@ -132,7 +134,7 @@ function parsePermissions(permissions: unknown): ApiScope[] {
     }
     return perms;
   }
-  
+
   return [];
 }
 
@@ -146,18 +148,15 @@ export function hasPermission(ctx: ApiContext, scope: ApiScope): boolean {
 /**
  * Require a specific permission, returns error response if not authorized
  */
-export function requirePermission(
-  ctx: ApiContext | null,
-  scope: ApiScope
-): NextResponse | null {
+export function requirePermission(ctx: ApiContext | null, scope: ApiScope): NextResponse | null {
   if (!ctx) {
     return errorResponse("Unauthorized", 401);
   }
-  
+
   if (!hasPermission(ctx, scope)) {
     return errorResponse(`Missing required permission: ${scope}`, 403);
   }
-  
+
   return null;
 }
 

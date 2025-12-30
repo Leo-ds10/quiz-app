@@ -26,9 +26,7 @@ export default async function LeaderboardPage({ searchParams }: PageProps) {
         <Trophy className="h-8 w-8 text-yellow-500" />
         <div>
           <h1 className="text-3xl font-bold">Global Leaderboard</h1>
-          <p className="text-muted-foreground">
-            Top players across all quizzes
-          </p>
+          <p className="text-muted-foreground">Top players across all quizzes</p>
         </div>
       </div>
 
@@ -40,10 +38,7 @@ export default async function LeaderboardPage({ searchParams }: PageProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <GlobalLeaderboard
-            entries={leaderboard.items}
-            currentUserId={session?.user?.id}
-          />
+          <GlobalLeaderboard entries={leaderboard.items} currentUserId={session?.user?.id} />
           <div className="mt-4">
             <PaginationControls
               currentPage={leaderboard.currentPage}

@@ -137,12 +137,12 @@ curl -H "x-api-key: your_api_key_here" https://yourapp.com/api/quizzes
 
 Admins can create and manage API keys through the web UI at `/settings`. Each API key can have specific permission scopes:
 
-| Scope | Description |
-| ----- | ----------- |
-| `quizzes:read` | List and view quizzes, view leaderboards |
-| `quizzes:write` | Create, update, and delete quizzes (requires admin role) |
-| `attempts:read` | View quiz attempts |
-| `attempts:write` | Submit quiz attempts |
+| Scope            | Description                                              |
+| ---------------- | -------------------------------------------------------- |
+| `quizzes:read`   | List and view quizzes, view leaderboards                 |
+| `quizzes:write`  | Create, update, and delete quizzes (requires admin role) |
+| `attempts:read`  | View quiz attempts                                       |
+| `attempts:write` | Submit quiz attempts                                     |
 
 ### Rate Limiting
 
@@ -160,10 +160,10 @@ GET /api/quizzes
 
 **Query Parameters:**
 
-| Parameter | Type | Default | Description |
-| --------- | ---- | ------- | ----------- |
-| `page` | number | 1 | Page number |
-| `limit` | number | 30 | Items per page (max 100) |
+| Parameter | Type   | Default | Description              |
+| --------- | ------ | ------- | ------------------------ |
+| `page`    | number | 1       | Page number              |
+| `limit`   | number | 30      | Items per page (max 100) |
 
 **Required Permission:** `quizzes:read`
 
@@ -311,11 +311,11 @@ GET /api/quizzes/:id/attempts
 
 **Query Parameters:**
 
-| Parameter | Type | Default | Description |
-| --------- | ---- | ------- | ----------- |
-| `page` | number | 1 | Page number |
-| `limit` | number | 30 | Items per page (max 100) |
-| `userId` | string | — | Filter by user ID |
+| Parameter | Type   | Default | Description              |
+| --------- | ------ | ------- | ------------------------ |
+| `page`    | number | 1       | Page number              |
+| `limit`   | number | 30      | Items per page (max 100) |
+| `userId`  | string | —       | Filter by user ID        |
 
 **Required Permission:** `attempts:read`
 
@@ -378,10 +378,10 @@ GET /api/quizzes/:id/leaderboard
 
 **Query Parameters:**
 
-| Parameter | Type | Default | Description |
-| --------- | ---- | ------- | ----------- |
-| `page` | number | 1 | Page number |
-| `limit` | number | 30 | Items per page (max 100) |
+| Parameter | Type   | Default | Description              |
+| --------- | ------ | ------- | ------------------------ |
+| `page`    | number | 1       | Page number              |
+| `limit`   | number | 30      | Items per page (max 100) |
 
 **Required Permission:** `quizzes:read`
 
@@ -420,10 +420,10 @@ GET /api/leaderboard
 
 **Query Parameters:**
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `page` | number | 1 | Page number |
-| `limit` | number | 30 | Items per page (max 100) |
+| Parameter | Type   | Default | Description              |
+| --------- | ------ | ------- | ------------------------ |
+| `page`    | number | 1       | Page number              |
+| `limit`   | number | 30      | Items per page (max 100) |
 
 **Required Permission:** `quizzes:read`
 
@@ -460,30 +460,30 @@ All endpoints return consistent error responses:
 }
 ```
 
-| Status Code | Description |
-| ----------- | ----------- |
-| `400` | Bad Request — Invalid input data |
-| `401` | Unauthorized — Missing or invalid API key |
-| `403` | Forbidden — Insufficient permissions |
-| `404` | Not Found — Resource doesn't exist |
-| `429` | Too Many Requests — Rate limit exceeded |
-| `500` | Internal Server Error — Something went wrong |
+| Status Code | Description                                  |
+| ----------- | -------------------------------------------- |
+| `400`       | Bad Request — Invalid input data             |
+| `401`       | Unauthorized — Missing or invalid API key    |
+| `403`       | Forbidden — Insufficient permissions         |
+| `404`       | Not Found — Resource doesn't exist           |
+| `429`       | Too Many Requests — Rate limit exceeded      |
+| `500`       | Internal Server Error — Something went wrong |
 
 ---
 
 ## Scripts
 
-| Command | Description |
-| ------- | ----------- |
-| `bun run dev` | Start development server with Turbopack |
-| `bun run build` | Build for production |
-| `bun run start` | Start production server |
-| `bun run lint` | Run ESLint |
-| `bun run db:push` | Push schema changes to database |
-| `bun run db:generate` | Generate migration files |
-| `bun run db:migrate` | Run migrations |
-| `bun run db:studio` | Open Drizzle Studio |
-| `bun test` | Run tests |
+| Command               | Description                             |
+| --------------------- | --------------------------------------- |
+| `bun run dev`         | Start development server with Turbopack |
+| `bun run build`       | Build for production                    |
+| `bun run start`       | Start production server                 |
+| `bun run lint`        | Run ESLint                              |
+| `bun run db:push`     | Push schema changes to database         |
+| `bun run db:generate` | Generate migration files                |
+| `bun run db:migrate`  | Run migrations                          |
+| `bun run db:studio`   | Open Drizzle Studio                     |
+| `bun test`            | Run tests                               |
 
 ## License
 

@@ -73,7 +73,7 @@ export async function createQuiz(data: QuizFormData) {
           questionId: newQuestion.id,
           text: a.text,
           isCorrect: a.isCorrect,
-        }))
+        })),
       );
     }
 
@@ -156,7 +156,7 @@ export async function updateQuiz(quizId: string, data: QuizFormData) {
           questionId: newQuestion.id,
           text: a.text,
           isCorrect: a.isCorrect,
-        }))
+        })),
       );
     }
 

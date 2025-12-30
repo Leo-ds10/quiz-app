@@ -6,12 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { QuestionFormData, AnswerFormData } from "@/lib/validations/quiz";
 
 interface QuestionFieldProps {
@@ -31,7 +26,7 @@ export function QuestionField({
 }: QuestionFieldProps) {
   const updateAnswer = (answerIndex: number, answer: Partial<AnswerFormData>) => {
     const newAnswers = question.answers.map((a, i) =>
-      i === answerIndex ? { ...a, ...answer } : a
+      i === answerIndex ? { ...a, ...answer } : a,
     );
     onChange({ ...question, answers: newAnswers });
   };
@@ -56,12 +51,12 @@ export function QuestionField({
     if (question.answers.length <= 2) return;
     const removingCorrect = question.answers[answerIndex].isCorrect;
     let newAnswers = question.answers.filter((_, i) => i !== answerIndex);
-    
+
     // If we removed the correct answer, make the first one correct
     if (removingCorrect && newAnswers.length > 0) {
       newAnswers = newAnswers.map((a, i) => ({ ...a, isCorrect: i === 0 }));
     }
-    
+
     onChange({ ...question, answers: newAnswers });
   };
 
@@ -70,9 +65,7 @@ export function QuestionField({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-base font-medium">
-          Question {index + 1}
-        </CardTitle>
+        <CardTitle className="text-base font-medium">Question {index + 1}</CardTitle>
         {canRemove && (
           <Button
             type="button"
@@ -118,13 +111,8 @@ export function QuestionField({
           <div className="flex items-center justify-between">
             <Label>Answers (select the correct one) *</Label>
             {question.answers.length < 6 && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={addAnswer}
-              >
-                <Plus className="h-3 w-3 mr-1" />
+              <Button type="button" variant="outline" size="sm" onClick={addAnswer}>
+                <Plus className="mr-1 h-3 w-3" />
                 Add
               </Button>
             )}
@@ -135,19 +123,14 @@ export function QuestionField({
             onValueChange={(value) => setCorrectAnswer(parseInt(value))}
           >
             {question.answers.map((answer, answerIndex) => (
-              <div
-                key={answerIndex}
-                className="flex items-center gap-2 p-2 rounded-md border"
-              >
+              <div key={answerIndex} className="flex items-center gap-2 rounded-md border p-2">
                 <RadioGroupItem
                   value={answerIndex.toString()}
                   id={`question-${index}-answer-${answerIndex}`}
                 />
                 <Input
                   value={answer.text}
-                  onChange={(e) =>
-                    updateAnswer(answerIndex, { text: e.target.value })
-                  }
+                  onChange={(e) => updateAnswer(answerIndex, { text: e.target.value })}
                   placeholder={`Answer ${answerIndex + 1}`}
                   className="flex-1"
                   required

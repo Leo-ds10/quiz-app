@@ -35,9 +35,7 @@ export default async function QuizDetailPage({ params, searchParams }: PageProps
   }
 
   const canEdit = canEditQuiz(session?.user, quiz.authorId);
-  const userAttemptCount = session?.user
-    ? await getUserAttemptCount(id, session.user.id)
-    : 0;
+  const userAttemptCount = session?.user ? await getUserAttemptCount(id, session.user.id) : 0;
   const attemptsRemaining = quiz.maxAttempts - userAttemptCount;
   const canPlay = attemptsRemaining > 0;
 
@@ -54,7 +52,7 @@ export default async function QuizDetailPage({ params, searchParams }: PageProps
       {/* Hero Section */}
       <div className="relative">
         {quiz.heroImageUrl && (
-          <div className="relative aspect-[3/1] w-full rounded-xl overflow-hidden mb-6">
+          <div className="relative mb-6 aspect-[3/1] w-full overflow-hidden rounded-xl">
             <Image
               src={quiz.heroImageUrl}
               alt={quiz.title}
@@ -62,11 +60,11 @@ export default async function QuizDetailPage({ params, searchParams }: PageProps
               className="object-cover"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+            <div className="from-background/80 absolute inset-0 bg-gradient-to-t to-transparent" />
           </div>
         )}
 
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div className="space-y-2">
             <h1 className="text-3xl font-bold">{quiz.title}</h1>
             {quiz.description && (
@@ -85,9 +83,7 @@ export default async function QuizDetailPage({ params, searchParams }: PageProps
                 <Users className="h-3 w-3" />
                 {quiz.maxAttempts} {quiz.maxAttempts === 1 ? "attempt" : "attempts"}
               </Badge>
-              {quiz.randomizeQuestions && (
-                <Badge variant="outline">Randomized</Badge>
-              )}
+              {quiz.randomizeQuestions && <Badge variant="outline">Randomized</Badge>}
             </div>
           </div>
 
@@ -95,7 +91,7 @@ export default async function QuizDetailPage({ params, searchParams }: PageProps
             {canPlay ? (
               <Button asChild size="lg">
                 <Link href={`/quiz/${id}/play`}>
-                  <Play className="h-4 w-4 mr-2" />
+                  <Play className="mr-2 h-4 w-4" />
                   Start Quiz
                 </Link>
               </Button>
@@ -109,7 +105,7 @@ export default async function QuizDetailPage({ params, searchParams }: PageProps
               <>
                 <Button asChild variant="outline" size="lg">
                   <Link href={`/quiz/${id}/edit`}>
-                    <Pencil className="h-4 w-4 mr-2" />
+                    <Pencil className="mr-2 h-4 w-4" />
                     Edit
                   </Link>
                 </Button>
@@ -120,7 +116,7 @@ export default async function QuizDetailPage({ params, searchParams }: PageProps
         </div>
 
         {session?.user && (
-          <p className="text-sm text-muted-foreground mt-4">
+          <p className="text-muted-foreground mt-4 text-sm">
             You have used {userAttemptCount} of {quiz.maxAttempts} attempts
           </p>
         )}
@@ -132,15 +128,10 @@ export default async function QuizDetailPage({ params, searchParams }: PageProps
       <Card>
         <CardHeader>
           <CardTitle>Leaderboard</CardTitle>
-          <CardDescription>
-            Top scores for this quiz
-          </CardDescription>
+          <CardDescription>Top scores for this quiz</CardDescription>
         </CardHeader>
         <CardContent>
-          <QuizLeaderboard
-            entries={leaderboard.items}
-            currentUserId={session?.user?.id}
-          />
+          <QuizLeaderboard entries={leaderboard.items} currentUserId={session?.user?.id} />
           <div className="mt-4">
             <PaginationControls
               currentPage={leaderboard.currentPage}

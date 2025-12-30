@@ -22,13 +22,11 @@ export default async function SettingsPage() {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold flex items-center gap-2">
+        <h1 className="flex items-center gap-2 text-3xl font-bold">
           <Settings className="h-8 w-8" />
           Settings
         </h1>
-        <p className="text-muted-foreground mt-2">
-          Manage your API keys and application settings.
-        </p>
+        <p className="text-muted-foreground mt-2">Manage your API keys and application settings.</p>
       </div>
 
       <div className="max-w-4xl">

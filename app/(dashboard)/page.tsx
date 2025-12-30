@@ -35,7 +35,7 @@ export default async function HomePage({ searchParams }: PageProps) {
         {canCreate && (
           <Button asChild>
             <Link href="/quiz/new">
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               Create Quiz
             </Link>
           </Button>
@@ -43,10 +43,8 @@ export default async function HomePage({ searchParams }: PageProps) {
       </div>
 
       {quizzes.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">
-            No quizzes available yet.
-          </p>
+        <div className="py-12 text-center">
+          <p className="text-muted-foreground text-lg">No quizzes available yet.</p>
           {canCreate && (
             <Button asChild className="mt-4">
               <Link href="/quiz/new">Create the first quiz</Link>

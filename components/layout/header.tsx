@@ -14,7 +14,7 @@ export async function Header() {
   const isAdmin = session?.user ? canManageQuizzes(session.user) : false;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <header className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
       <div className="container mx-auto flex h-14 items-center">
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
@@ -24,14 +24,14 @@ export async function Header() {
           <nav className="flex items-center space-x-6 text-sm font-medium">
             <Link
               href="/"
-              className="flex items-center gap-1 transition-colors hover:text-foreground/80 text-foreground/60"
+              className="hover:text-foreground/80 text-foreground/60 flex items-center gap-1 transition-colors"
             >
               <Swords className="h-4 w-4" />
               Quizzes
             </Link>
             <Link
               href="/leaderboard"
-              className="flex items-center gap-1 transition-colors hover:text-foreground/80 text-foreground/60"
+              className="hover:text-foreground/80 text-foreground/60 flex items-center gap-1 transition-colors"
             >
               <Trophy className="h-4 w-4" />
               Leaderboard

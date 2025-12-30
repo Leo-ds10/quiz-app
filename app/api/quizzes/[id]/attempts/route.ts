@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { quiz, quizAttempt, attemptAnswer } from "@/lib/db/schema";
-import {
-  getApiContext,
-  requirePermission,
-  errorResponse,
-  API_SCOPES,
-} from "@/lib/auth/api";
+import { getApiContext, requirePermission, errorResponse, API_SCOPES } from "@/lib/auth/api";
 import { eq, and, count, desc } from "drizzle-orm";
 import { z } from "zod";
 
@@ -20,7 +15,7 @@ const submitAttemptSchema = z.object({
       questionId: z.string(),
       answerId: z.string(),
       displayOrder: z.number(),
-    })
+    }),
   ),
   totalTimeMs: z.number().int().min(0),
   timedOut: z.boolean().default(false),
@@ -50,10 +45,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       : eq(quizAttempt.quizId, id);
 
     // Get total count
-    const [{ total }] = await db
-      .select({ total: count() })
-      .from(quizAttempt)
-      .where(conditions);
+    const [{ total }] = await db.select({ total: count() }).from(quizAttempt).where(conditions);
 
     // Get attempts
     const attempts = await db.query.quizAttempt.findMany({
@@ -128,12 +120,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   const [{ attemptCount }] = await db
     .select({ attemptCount: count() })
     .from(quizAttempt)
-    .where(
-      and(
-        eq(quizAttempt.quizId, quizId),
-        eq(quizAttempt.userId, ctx!.user.id)
-      )
-    );
+    .where(and(eq(quizAttempt.quizId, quizId), eq(quizAttempt.userId, ctx!.user.id)));
 
   if (attemptCount >= quizData.maxAttempts) {
     return errorResponse("Maximum attempts reached", 400);
@@ -149,15 +136,11 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   }[] = [];
 
   for (const submittedAnswer of data.answers) {
-    const question = quizData.questions.find(
-      (q) => q.id === submittedAnswer.questionId
-    );
+    const question = quizData.questions.find((q) => q.id === submittedAnswer.questionId);
 
     if (!question) continue;
 
-    const selectedAnswer = question.answers.find(
-      (a) => a.id === submittedAnswer.answerId
-    );
+    const selectedAnswer = question.answers.find((a) => a.id === submittedAnswer.answerId);
 
     const isCorrect = selectedAnswer?.isCorrect ?? false;
     if (isCorrect) correctCount++;
@@ -193,7 +176,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
           answerId: ar.answerId,
           isCorrect: ar.isCorrect,
           displayOrder: ar.displayOrder,
-        }))
+        })),
       );
     }
 

@@ -2,17 +2,12 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { authClient } from "@/lib/auth/client";
+import { createApiKey, deleteApiKey } from "@/app/actions/api-keys";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -122,20 +117,21 @@ export function ApiKeyManager() {
           }
         }
 
-        const result = await authClient.apiKey.create({
+        // Use server action to create API key (permissions can only be set server-side)
+        const result = await createApiKey({
           name: keyName.trim(),
-          expiresIn: expiresInSeconds,
+          expiresInSeconds,
           permissions,
         });
 
-        if (result.error) {
-          setError(result.error.message || "Failed to create API key");
+        if (!result.success) {
+          setError(result.error || "Failed to create API key");
           return;
         }
 
         // Show the key value (only shown once!)
-        setNewKeyValue(result.data?.key || null);
-        
+        setNewKeyValue(result.key || null);
+
         // Refresh the list
         await fetchApiKeys();
       } catch (err) {
@@ -151,9 +147,10 @@ export function ApiKeyManager() {
 
     startTransition(async () => {
       try {
-        const result = await authClient.apiKey.delete({ keyId });
-        if (result.error) {
-          setError(result.error.message || "Failed to delete API key");
+        // Use server action to delete API key
+        const result = await deleteApiKey(keyId);
+        if (!result.success) {
+          setError(result.error || "Failed to delete API key");
           return;
         }
         await fetchApiKeys();
@@ -213,7 +210,7 @@ export function ApiKeyManager() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center py-8 text-muted-foreground">
+          <div className="text-muted-foreground flex items-center justify-center py-8">
             Loading...
           </div>
         </CardContent>
@@ -237,7 +234,7 @@ export function ApiKeyManager() {
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
               <Button>
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="mr-2 h-4 w-4" />
                 Create Key
               </Button>
             </DialogTrigger>
@@ -252,16 +249,8 @@ export function ApiKeyManager() {
                   </DialogHeader>
                   <div className="space-y-4">
                     <div className="flex items-center gap-2">
-                      <Input
-                        value={newKeyValue}
-                        readOnly
-                        className="font-mono text-sm"
-                      />
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={handleCopyKey}
-                      >
+                      <Input value={newKeyValue} readOnly className="font-mono text-sm" />
+                      <Button variant="outline" size="icon" onClick={handleCopyKey}>
                         {copied ? (
                           <Check className="h-4 w-4 text-green-500" />
                         ) : (
@@ -270,9 +259,10 @@ export function ApiKeyManager() {
                       </Button>
                     </div>
                     <div className="flex items-start gap-2 text-sm text-amber-600 dark:text-amber-500">
-                      <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                       <p>
-                        Store this key securely. It will only be shown once and cannot be retrieved later.
+                        Store this key securely. It will only be shown once and cannot be retrieved
+                        later.
                       </p>
                     </div>
                   </div>
@@ -290,7 +280,7 @@ export function ApiKeyManager() {
                   </DialogHeader>
                   <div className="space-y-4">
                     {error && (
-                      <div className="text-sm text-red-500 flex items-center gap-2">
+                      <div className="flex items-center gap-2 text-sm text-red-500">
                         <AlertCircle className="h-4 w-4" />
                         {error}
                       </div>
@@ -317,13 +307,10 @@ export function ApiKeyManager() {
                       <Label>Permissions</Label>
                       <div className="space-y-2">
                         {ALL_API_SCOPES.map((scope) => (
-                          <div
-                            key={scope}
-                            className="flex items-center justify-between"
-                          >
+                          <div key={scope} className="flex items-center justify-between">
                             <Label
                               htmlFor={`scope-${scope}`}
-                              className="font-normal cursor-pointer"
+                              className="cursor-pointer font-normal"
                             >
                               {SCOPE_LABELS[scope]}
                             </Label>
@@ -338,10 +325,7 @@ export function ApiKeyManager() {
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button
-                      variant="outline"
-                      onClick={handleCloseCreateDialog}
-                    >
+                    <Button variant="outline" onClick={handleCloseCreateDialog}>
                       Cancel
                     </Button>
                     <Button onClick={handleCreateKey} disabled={isPending}>
@@ -356,13 +340,13 @@ export function ApiKeyManager() {
       </CardHeader>
       <CardContent>
         {error && !isCreateOpen && (
-          <div className="mb-4 text-sm text-red-500 flex items-center gap-2">
+          <div className="mb-4 flex items-center gap-2 text-sm text-red-500">
             <AlertCircle className="h-4 w-4" />
             {error}
           </div>
         )}
         {apiKeys.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="text-muted-foreground py-8 text-center">
             No API keys yet. Create one to get started.
           </div>
         ) : (
@@ -380,9 +364,7 @@ export function ApiKeyManager() {
             <TableBody>
               {apiKeys.map((key) => (
                 <TableRow key={key.id}>
-                  <TableCell className="font-medium">
-                    {key.name || "Unnamed"}
-                  </TableCell>
+                  <TableCell className="font-medium">{key.name || "Unnamed"}</TableCell>
                   <TableCell className="font-mono text-sm">
                     {key.prefix ? `${key.prefix}...` : "-"}
                   </TableCell>
@@ -399,9 +381,7 @@ export function ApiKeyManager() {
                     {new Date(key.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {key.expiresAt
-                      ? new Date(key.expiresAt).toLocaleDateString()
-                      : "Never"}
+                    {key.expiresAt ? new Date(key.expiresAt).toLocaleDateString() : "Never"}
                   </TableCell>
                   <TableCell>
                     <Button

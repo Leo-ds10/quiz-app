@@ -43,7 +43,7 @@ export function DeleteQuizButton({ quizId }: DeleteQuizButtonProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="destructive" size="lg">
-          <Trash2 className="h-4 w-4 mr-2" />
+          <Trash2 className="mr-2 h-4 w-4" />
           Delete
         </Button>
       </DialogTrigger>
@@ -51,25 +51,16 @@ export function DeleteQuizButton({ quizId }: DeleteQuizButtonProps) {
         <DialogHeader>
           <DialogTitle>Delete Quiz</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this quiz? This action cannot be
-            undone. All questions, answers, and attempt history will be
-            permanently deleted.
+            Are you sure you want to delete this quiz? This action cannot be undone. All questions,
+            answers, and attempt history will be permanently deleted.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => setOpen(false)}
-            disabled={isDeleting}
-          >
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={isDeleting}>
             Cancel
           </Button>
-          <Button
-            variant="destructive"
-            onClick={handleDelete}
-            disabled={isDeleting}
-          >
-            {isDeleting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+          <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+            {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Delete Quiz
           </Button>
         </DialogFooter>

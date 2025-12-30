@@ -90,21 +90,23 @@ A server-rendered Next.js 16 quiz app authenticating against `auth.hogwarts.zone
      database: drizzleAdapter(db, { provider: "sqlite" }),
      plugins: [
        genericOAuth({
-         config: [{
-           providerId: "hogwarts",
-           discoveryUrl: "https://auth.hogwarts.zone/.well-known/openid-configuration",
-           clientId: process.env.OIDC_CLIENT_ID!,
-           clientSecret: process.env.OIDC_CLIENT_SECRET!,
-           scopes: ["openid", "profile", "email", "groups"],
-           pkce: true,
-           mapProfileToUser: (profile) => ({
-             displayName: profile.display_name,
-             givenName: profile.given_name,
-             familyName: profile.family_name,
-             preferredUsername: profile.preferred_username,
-             groups: JSON.stringify(profile.groups ?? []),
-           }),
-         }],
+         config: [
+           {
+             providerId: "hogwarts",
+             discoveryUrl: "https://auth.hogwarts.zone/.well-known/openid-configuration",
+             clientId: process.env.OIDC_CLIENT_ID!,
+             clientSecret: process.env.OIDC_CLIENT_SECRET!,
+             scopes: ["openid", "profile", "email", "groups"],
+             pkce: true,
+             mapProfileToUser: (profile) => ({
+               displayName: profile.display_name,
+               givenName: profile.given_name,
+               familyName: profile.family_name,
+               preferredUsername: profile.preferred_username,
+               groups: JSON.stringify(profile.groups ?? []),
+             }),
+           },
+         ],
        }),
      ],
      user: {
@@ -120,7 +122,6 @@ A server-rendered Next.js 16 quiz app authenticating against `auth.hogwarts.zone
    ```
 
 5. **Build auth utilities & middleware**:
-
    - `lib/auth/permissions.ts`:
 
      ```ts

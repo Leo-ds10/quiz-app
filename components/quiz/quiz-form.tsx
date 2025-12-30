@@ -8,13 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { QuestionField } from "./question-field";
 import type { QuizFormData, QuestionFormData } from "@/lib/validations/quiz";
@@ -34,11 +28,7 @@ const defaultQuestion: QuestionFormData = {
   ],
 };
 
-export function QuizForm({
-  initialData,
-  onSubmit,
-  submitLabel = "Create Quiz",
-}: QuizFormProps) {
+export function QuizForm({ initialData, onSubmit, submitLabel = "Create Quiz" }: QuizFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,10 +43,7 @@ export function QuizForm({
     questions: initialData?.questions ?? [{ ...defaultQuestion }],
   });
 
-  const updateField = <K extends keyof QuizFormData>(
-    field: K,
-    value: QuizFormData[K]
-  ) => {
+  const updateField = <K extends keyof QuizFormData>(field: K, value: QuizFormData[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -124,9 +111,7 @@ export function QuizForm({
       <Card>
         <CardHeader>
           <CardTitle>Quiz Details</CardTitle>
-          <CardDescription>
-            Basic information about your quiz
-          </CardDescription>
+          <CardDescription>Basic information about your quiz</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -162,7 +147,7 @@ export function QuizForm({
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="maxAttempts">Max Attempts</Label>
               <Input
@@ -170,24 +155,18 @@ export function QuizForm({
                 type="number"
                 min={1}
                 value={formData.maxAttempts}
-                onChange={(e) =>
-                  updateField("maxAttempts", parseInt(e.target.value) || 1)
-                }
+                onChange={(e) => updateField("maxAttempts", parseInt(e.target.value) || 1)}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="timeLimitSeconds">
-                Time Limit (seconds, 0 = unlimited)
-              </Label>
+              <Label htmlFor="timeLimitSeconds">Time Limit (seconds, 0 = unlimited)</Label>
               <Input
                 id="timeLimitSeconds"
                 type="number"
                 min={0}
                 value={formData.timeLimitSeconds}
-                onChange={(e) =>
-                  updateField("timeLimitSeconds", parseInt(e.target.value) || 0)
-                }
+                onChange={(e) => updateField("timeLimitSeconds", parseInt(e.target.value) || 0)}
               />
             </div>
           </div>
@@ -196,9 +175,7 @@ export function QuizForm({
             <Switch
               id="randomizeQuestions"
               checked={formData.randomizeQuestions}
-              onCheckedChange={(checked) =>
-                updateField("randomizeQuestions", checked)
-              }
+              onCheckedChange={(checked) => updateField("randomizeQuestions", checked)}
             />
             <Label htmlFor="randomizeQuestions">Randomize question order</Label>
           </div>
@@ -210,7 +187,7 @@ export function QuizForm({
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Questions</h2>
           <Button type="button" onClick={addQuestion} variant="outline">
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="mr-2 h-4 w-4" />
             Add Question
           </Button>
         </div>
@@ -230,7 +207,7 @@ export function QuizForm({
       {/* Submit */}
       <div className="flex gap-4">
         <Button type="submit" disabled={isSubmitting} className="flex-1">
-          {isSubmitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {submitLabel}
         </Button>
         <Button

@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getGlobalLeaderboard } from "@/lib/db/queries/quiz";
-import {
-  getApiContext,
-  requirePermission,
-  errorResponse,
-  API_SCOPES,
-} from "@/lib/auth/api";
+import { getApiContext, requirePermission, errorResponse, API_SCOPES } from "@/lib/auth/api";
 
 /**
  * GET /api/leaderboard

@@ -43,12 +43,7 @@ export async function submitQuizAttempt(data: SubmitAttemptData) {
   const [{ attemptCount }] = await db
     .select({ attemptCount: count() })
     .from(quizAttempt)
-    .where(
-      and(
-        eq(quizAttempt.quizId, data.quizId),
-        eq(quizAttempt.userId, session.user.id)
-      )
-    );
+    .where(and(eq(quizAttempt.quizId, data.quizId), eq(quizAttempt.userId, session.user.id)));
 
   if (attemptCount >= quizData.maxAttempts) {
     return { error: "Maximum attempts reached" };
@@ -64,15 +59,11 @@ export async function submitQuizAttempt(data: SubmitAttemptData) {
   }[] = [];
 
   for (const submittedAnswer of data.answers) {
-    const question = quizData.questions.find(
-      (q) => q.id === submittedAnswer.questionId
-    );
-    
+    const question = quizData.questions.find((q) => q.id === submittedAnswer.questionId);
+
     if (!question) continue;
 
-    const selectedAnswer = question.answers.find(
-      (a) => a.id === submittedAnswer.answerId
-    );
+    const selectedAnswer = question.answers.find((a) => a.id === submittedAnswer.answerId);
 
     const isCorrect = selectedAnswer?.isCorrect ?? false;
     if (isCorrect) correctCount++;
@@ -108,7 +99,7 @@ export async function submitQuizAttempt(data: SubmitAttemptData) {
           answerId: ar.answerId,
           isCorrect: ar.isCorrect,
           displayOrder: ar.displayOrder,
-        }))
+        })),
       );
     }
 

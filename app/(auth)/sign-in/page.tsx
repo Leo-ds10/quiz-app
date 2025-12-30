@@ -4,13 +4,7 @@ import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { authClient } from "@/lib/auth/client";
 
 function SignInContent() {
@@ -25,11 +19,11 @@ function SignInContent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
-      <Card className="w-full max-w-md mx-4">
+    <div className="from-background to-muted flex min-h-screen items-center justify-center bg-gradient-to-br">
+      <Card className="mx-4 w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <Brain className="h-12 w-12 text-primary" />
+          <div className="mb-4 flex justify-center">
+            <Brain className="text-primary h-12 w-12" />
           </div>
           <CardTitle className="text-2xl">Welcome to Quiz App</CardTitle>
           <CardDescription>
@@ -48,21 +42,21 @@ function SignInContent() {
 
 export default function SignInPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
-        <Card className="w-full max-w-md mx-4">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <Brain className="h-12 w-12 text-primary" />
-            </div>
-            <CardTitle className="text-2xl">Welcome to Quiz App</CardTitle>
-            <CardDescription>
-              Loading...
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="from-background to-muted flex min-h-screen items-center justify-center bg-gradient-to-br">
+          <Card className="mx-4 w-full max-w-md">
+            <CardHeader className="text-center">
+              <div className="mb-4 flex justify-center">
+                <Brain className="text-primary h-12 w-12" />
+              </div>
+              <CardTitle className="text-2xl">Welcome to Quiz App</CardTitle>
+              <CardDescription>Loading...</CardDescription>
+            </CardHeader>
+          </Card>
+        </div>
+      }
+    >
       <SignInContent />
     </Suspense>
   );

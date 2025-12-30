@@ -24,10 +24,7 @@ interface GlobalLeaderboardProps {
   currentUserId?: string;
 }
 
-export function GlobalLeaderboard({
-  entries,
-  currentUserId,
-}: GlobalLeaderboardProps) {
+export function GlobalLeaderboard({ entries, currentUserId }: GlobalLeaderboardProps) {
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -49,9 +46,7 @@ export function GlobalLeaderboard({
       case 3:
         return <Medal className="h-5 w-5 text-amber-600" />;
       default:
-        return (
-          <span className="w-5 text-center text-muted-foreground">{rank}</span>
-        );
+        return <span className="text-muted-foreground w-5 text-center">{rank}</span>;
     }
   };
 
@@ -70,7 +65,7 @@ export function GlobalLeaderboard({
 
   if (entries.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
+      <div className="text-muted-foreground py-8 text-center">
         No quiz attempts yet. Be the first to play!
       </div>
     );
@@ -91,10 +86,7 @@ export function GlobalLeaderboard({
         {entries.map((entry) => {
           const isCurrentUser = entry.user.id === currentUserId;
           return (
-            <TableRow
-              key={entry.user.id}
-              className={isCurrentUser ? "bg-primary/5" : ""}
-            >
+            <TableRow key={entry.user.id} className={isCurrentUser ? "bg-primary/5" : ""}>
               <TableCell>{getRankIcon(entry.rank)}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
@@ -103,9 +95,7 @@ export function GlobalLeaderboard({
                     <AvatarFallback>{getInitials(entry.user)}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <span className="font-medium">
-                      {entry.user.displayName || entry.user.name}
-                    </span>
+                    <span className="font-medium">{entry.user.displayName || entry.user.name}</span>
                     {isCurrentUser && (
                       <Badge variant="secondary" className="ml-2 text-xs">
                         You
@@ -115,17 +105,17 @@ export function GlobalLeaderboard({
                 </div>
               </TableCell>
               <TableCell className="text-right">
-                <span className="font-medium text-lg">{entry.totalCorrect}</span>
+                <span className="text-lg font-medium">{entry.totalCorrect}</span>
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-1">
-                  <Gamepad2 className="h-4 w-4 text-muted-foreground" />
+                  <Gamepad2 className="text-muted-foreground h-4 w-4" />
                   {entry.quizzesPlayed}
                 </div>
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-1">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <Clock className="text-muted-foreground h-4 w-4" />
                   {formatTime(entry.totalTimeMs)}
                 </div>
               </TableCell>

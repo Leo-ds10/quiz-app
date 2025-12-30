@@ -19,12 +19,10 @@ export default async function NewQuizPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="mx-auto max-w-3xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Create New Quiz</h1>
-        <p className="text-muted-foreground">
-          Create a new quiz with questions and answers
-        </p>
+        <p className="text-muted-foreground">Create a new quiz with questions and answers</p>
       </div>
 
       <QuizForm onSubmit={createQuiz} submitLabel="Create Quiz" />

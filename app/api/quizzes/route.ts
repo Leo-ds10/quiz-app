@@ -3,12 +3,7 @@ import { db } from "@/lib/db";
 import { quiz, question, answer } from "@/lib/db/schema";
 import { getQuizzes } from "@/lib/db/queries/quiz";
 import { quizSchema } from "@/lib/validations/quiz";
-import {
-  getApiContext,
-  requirePermission,
-  errorResponse,
-  API_SCOPES,
-} from "@/lib/auth/api";
+import { getApiContext, requirePermission, errorResponse, API_SCOPES } from "@/lib/auth/api";
 import { canManageQuizzes } from "@/lib/auth/permissions";
 
 /**
@@ -99,16 +94,13 @@ export async function POST(request: NextRequest) {
           questionId: newQuestion.id,
           text: a.text,
           isCorrect: a.isCorrect,
-        }))
+        })),
       );
     }
 
     return NextResponse.json(newQuiz, { status: 201 });
   } catch (error) {
     console.error("Failed to create quiz:", error);
-    return errorResponse(
-      error instanceof Error ? error.message : "Failed to create quiz",
-      500
-    );
+    return errorResponse(error instanceof Error ? error.message : "Failed to create quiz", 500);
   }
 }

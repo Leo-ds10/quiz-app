@@ -25,7 +25,7 @@ export const auth = betterAuth({
       rateLimit: {
         enabled: true,
         timeWindow: 60 * 1000, // 60 seconds in milliseconds
-        maxRequests: 100,      // 100 requests per window
+        maxRequests: 100, // 100 requests per window
       },
     }),
     genericOAuth({

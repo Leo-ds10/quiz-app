@@ -57,19 +57,13 @@ export default async function EditQuizPage({ params }: PageProps) {
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="mx-auto max-w-3xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Edit Quiz</h1>
-        <p className="text-muted-foreground">
-          Update your quiz details and questions
-        </p>
+        <p className="text-muted-foreground">Update your quiz details and questions</p>
       </div>
 
-      <QuizForm
-        initialData={initialData}
-        onSubmit={handleSubmit}
-        submitLabel="Save Changes"
-      />
+      <QuizForm initialData={initialData} onSubmit={handleSubmit} submitLabel="Save Changes" />
     </div>
   );
 }

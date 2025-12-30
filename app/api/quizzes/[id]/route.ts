@@ -123,17 +123,14 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           questionId: newQuestion.id,
           text: a.text,
           isCorrect: a.isCorrect,
-        }))
+        })),
       );
     }
 
     return NextResponse.json(updatedQuiz);
   } catch (error) {
     console.error("Failed to update quiz:", error);
-    return errorResponse(
-      error instanceof Error ? error.message : "Failed to update quiz",
-      500
-    );
+    return errorResponse(error instanceof Error ? error.message : "Failed to update quiz", 500);
   }
 }
 
@@ -168,9 +165,6 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error("Failed to delete quiz:", error);
-    return errorResponse(
-      error instanceof Error ? error.message : "Failed to delete quiz",
-      500
-    );
+    return errorResponse(error instanceof Error ? error.message : "Failed to delete quiz", 500);
   }
 }

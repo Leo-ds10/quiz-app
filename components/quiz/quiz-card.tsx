@@ -28,27 +28,20 @@ export function QuizCard({ quiz }: QuizCardProps) {
   };
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden">
+    <Card className="flex h-full flex-col overflow-hidden">
       {quiz.heroImageUrl && (
         <div className="relative aspect-video w-full">
-          <Image
-            src={quiz.heroImageUrl}
-            alt={quiz.title}
-            fill
-            className="object-cover"
-          />
+          <Image src={quiz.heroImageUrl} alt={quiz.title} fill className="object-cover" />
         </div>
       )}
       <CardHeader className="flex-1">
         <CardTitle className="line-clamp-2">{quiz.title}</CardTitle>
         {quiz.description && (
-          <CardDescription className="line-clamp-2">
-            {quiz.description}
-          </CardDescription>
+          <CardDescription className="line-clamp-2">{quiz.description}</CardDescription>
         )}
       </CardHeader>
       <CardContent className="space-y-2">
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex items-center gap-4 text-sm">
           <span className="flex items-center gap-1">
             <HelpCircle className="h-4 w-4" />
             {quiz.questionCount} questions
@@ -59,20 +52,16 @@ export function QuizCard({ quiz }: QuizCardProps) {
           </span>
         </div>
         {quiz.author && (
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-1 text-sm">
             <User className="h-4 w-4" />
             {quiz.author.displayName || quiz.author.name || "Unknown"}
           </div>
         )}
         <div className="flex gap-2">
           <Badge variant="secondary">
-            {quiz.maxAttempts === 1
-              ? "1 attempt"
-              : `${quiz.maxAttempts} attempts`}
+            {quiz.maxAttempts === 1 ? "1 attempt" : `${quiz.maxAttempts} attempts`}
           </Badge>
-          {quiz.randomizeQuestions && (
-            <Badge variant="outline">Randomized</Badge>
-          )}
+          {quiz.randomizeQuestions && <Badge variant="outline">Randomized</Badge>}
         </div>
       </CardContent>
       <CardFooter>

@@ -17,11 +17,7 @@ interface PaginationControlsProps {
   baseUrl?: string;
 }
 
-export function PaginationControls({
-  currentPage,
-  totalPages,
-  baseUrl,
-}: PaginationControlsProps) {
+export function PaginationControls({ currentPage, totalPages, baseUrl }: PaginationControlsProps) {
   if (totalPages <= 1) return null;
 
   const getPageUrl = (page: number) => {
@@ -88,23 +84,18 @@ export function PaginationControls({
             </PaginationItem>
           ) : (
             <PaginationItem key={page}>
-              <PaginationLink
-                href={getPageUrl(page)}
-                isActive={currentPage === page}
-              >
+              <PaginationLink href={getPageUrl(page)} isActive={currentPage === page}>
                 {page}
               </PaginationLink>
             </PaginationItem>
-          )
+          ),
         )}
 
         <PaginationItem>
           <PaginationNext
             href={getPageUrl(Math.min(totalPages, currentPage + 1))}
             aria-disabled={currentPage === totalPages}
-            className={
-              currentPage === totalPages ? "pointer-events-none opacity-50" : ""
-            }
+            className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
           />
         </PaginationItem>
       </PaginationContent>

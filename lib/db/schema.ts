@@ -132,9 +132,7 @@ export const quiz = sqliteTable("quiz", {
     .references(() => user.id, { onDelete: "cascade" }),
   maxAttempts: integer("max_attempts").notNull().default(1),
   timeLimitSeconds: integer("time_limit_seconds").notNull().default(0), // 0 = unlimited
-  randomizeQuestions: integer("randomize_questions", { mode: "boolean" })
-    .notNull()
-    .default(true),
+  randomizeQuestions: integer("randomize_questions", { mode: "boolean" }).notNull().default(true),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
