@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { headers } from "next/headers";
-import { Calendar, Clock, HelpCircle, Play, Pencil, Trash2, Users } from "lucide-react";
+import { Calendar, Clock, HelpCircle, Play, Pencil, Users } from "lucide-react";
 import { auth } from "@/lib/auth/server";
 import { canEditQuiz, canManageQuizzes } from "@/lib/auth/permissions";
 import { getQuizById, getQuizLeaderboard, getUserAttemptCount } from "@/lib/db/queries/quiz";

@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { quiz, question, answer, quizAttempt, user } from "@/lib/db/schema";
+import { quiz, quizAttempt, user } from "@/lib/db/schema";
 import type { Quiz, Question, Answer, User, QuizAttempt, AttemptAnswer } from "@/lib/db/schema";
 import { eq, desc, count, sql, and, or, lte, isNull } from "drizzle-orm";
 

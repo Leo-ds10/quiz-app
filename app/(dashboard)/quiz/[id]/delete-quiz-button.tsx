@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +19,6 @@ interface DeleteQuizButtonProps {
 }
 
 export function DeleteQuizButton({ quizId }: DeleteQuizButtonProps) {
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 

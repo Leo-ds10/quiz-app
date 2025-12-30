@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import type { User, QuizAttempt } from "@/lib/db/schema";
+import type { User } from "@/lib/db/schema";
 
 interface LeaderboardEntry {
   rank: number;

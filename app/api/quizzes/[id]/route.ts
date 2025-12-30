@@ -10,7 +10,6 @@ import {
   canEditQuizApi,
   API_SCOPES,
 } from "@/lib/auth/api";
-import { canManageQuizzes } from "@/lib/auth/permissions";
 import { eq } from "drizzle-orm";
 
 interface RouteParams {

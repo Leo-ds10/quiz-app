@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { CheckCircle, XCircle, Clock, Loader2 } from "lucide-react";
@@ -62,25 +62,65 @@ export function QuizPlayer({
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
   const hasTimeLimit = timeLimitSeconds > 0;
   const timeRemainingMs = hasTimeLimit ? Math.max(0, timeLimitSeconds * 1000 - elapsedMs) : null;
-  const isTimedOut = hasTimeLimit && timeRemainingMs === 0;
+
+  // Use a ref to track if we've already triggered a timeout submit
+  const hasTimedOutRef = useRef(false);
+
+  const handleSubmit = useCallback(
+    async (timedOut: boolean) => {
+      setIsSubmitting(true);
+      setError(null);
+
+      // Build answers array including unanswered questions
+      const answers = questions.map((q) => ({
+        questionId: q.id,
+        answerId: selectedAnswers[q.id]?.answerId ?? "",
+        displayOrder: q.displayOrder,
+      }));
+
+      try {
+        const result = await onSubmit({
+          quizId,
+          answers,
+          totalTimeMs: elapsedMs,
+          timedOut,
+        });
+
+        if (result.error) {
+          setError(result.error);
+          setIsSubmitting(false);
+        } else if (result.attemptId) {
+          router.push(`/quiz/${quizId}/results?attemptId=${result.attemptId}`);
+        }
+      } catch (err) {
+        console.error("Failed to submit quiz attempt:", err);
+        setError("An unexpected error occurred");
+        setIsSubmitting(false);
+      }
+    },
+    [questions, selectedAnswers, onSubmit, quizId, elapsedMs, router],
+  );
 
   // Timer effect - pauses when showing feedback (between confirming answer and clicking next)
+  // Also handles auto-submit on timeout
   useEffect(() => {
     if (showFeedback) return; // Pause timer while reviewing answer
 
     const interval = setInterval(() => {
-      setElapsedMs((prev) => prev + 100);
+      setElapsedMs((prev) => {
+        const newElapsed = prev + 100;
+        // Check if we've just timed out
+        if (hasTimeLimit && newElapsed >= timeLimitSeconds * 1000 && !hasTimedOutRef.current) {
+          hasTimedOutRef.current = true;
+          // Use setTimeout to avoid calling setState during render
+          setTimeout(() => handleSubmit(true), 0);
+        }
+        return newElapsed;
+      });
     }, 100);
 
     return () => clearInterval(interval);
-  }, [showFeedback]);
-
-  // Auto-submit on timeout
-  useEffect(() => {
-    if (isTimedOut && !isSubmitting) {
-      handleSubmit(true);
-    }
-  }, [isTimedOut]);
+  }, [showFeedback, hasTimeLimit, timeLimitSeconds, handleSubmit]);
 
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -114,37 +154,6 @@ export function QuizPlayer({
       handleSubmit(false);
     } else {
       setCurrentQuestionIndex((prev) => prev + 1);
-    }
-  };
-
-  const handleSubmit = async (timedOut: boolean) => {
-    setIsSubmitting(true);
-    setError(null);
-
-    // Build answers array including unanswered questions
-    const answers = questions.map((q) => ({
-      questionId: q.id,
-      answerId: selectedAnswers[q.id]?.answerId ?? "",
-      displayOrder: q.displayOrder,
-    }));
-
-    try {
-      const result = await onSubmit({
-        quizId,
-        answers,
-        totalTimeMs: elapsedMs,
-        timedOut,
-      });
-
-      if (result.error) {
-        setError(result.error);
-        setIsSubmitting(false);
-      } else if (result.attemptId) {
-        router.push(`/quiz/${quizId}/results?attemptId=${result.attemptId}`);
-      }
-    } catch (err) {
-      setError("An unexpected error occurred");
-      setIsSubmitting(false);
     }
   };
 

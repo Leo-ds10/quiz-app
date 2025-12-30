@@ -69,6 +69,7 @@ export function ApiKeyManager() {
       }
       setApiKeys((result.data as ApiKey[]) || []);
     } catch (err) {
+      console.error("Failed to fetch API keys:", err);
       setError("Failed to fetch API keys");
     } finally {
       setIsLoading(false);
@@ -135,6 +136,7 @@ export function ApiKeyManager() {
         // Refresh the list
         await fetchApiKeys();
       } catch (err) {
+        console.error("Failed to create API key:", err);
         setError("Failed to create API key");
       }
     });
@@ -155,6 +157,7 @@ export function ApiKeyManager() {
         }
         await fetchApiKeys();
       } catch (err) {
+        console.error("Failed to delete API key:", err);
         setError("Failed to delete API key");
       }
     });

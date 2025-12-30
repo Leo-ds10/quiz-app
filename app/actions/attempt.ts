@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { db } from "@/lib/db";
-import { quiz, quizAttempt, attemptAnswer, answer } from "@/lib/db/schema";
+import { quiz, quizAttempt, attemptAnswer } from "@/lib/db/schema";
 import type { Question, Answer } from "@/lib/db/schema";
 import { auth } from "@/lib/auth/server";
 import { eq, and, count } from "drizzle-orm";
