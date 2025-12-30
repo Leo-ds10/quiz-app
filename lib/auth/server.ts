@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { genericOAuth } from "better-auth/plugins";
+import { genericOAuth, apiKey } from "better-auth/plugins";
 import { db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
 
@@ -12,9 +12,22 @@ export const auth = betterAuth({
       session: schema.session,
       account: schema.account,
       verification: schema.verification,
+      apikey: schema.apikey,
     },
   }),
   plugins: [
+    apiKey({
+      // Enable session mocking for API key requests so we can reuse permission helpers
+      enableSessionForAPIKeys: true,
+      // Header to check for API key
+      apiKeyHeaders: ["x-api-key"],
+      // Default rate limit: 100 requests per minute
+      rateLimit: {
+        enabled: true,
+        timeWindow: 60 * 1000, // 60 seconds in milliseconds
+        maxRequests: 100,      // 100 requests per window
+      },
+    }),
     genericOAuth({
       config: [
         {

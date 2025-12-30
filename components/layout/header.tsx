@@ -1,9 +1,18 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { Brain, Swords, Trophy } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { UserButton } from "@/components/auth/user-button";
+import { auth } from "@/lib/auth/server";
+import { canManageQuizzes } from "@/lib/auth/permissions";
 
-export function Header() {
+export async function Header() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const isAdmin = session?.user ? canManageQuizzes(session.user) : false;
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="container mx-auto flex h-14 items-center">
@@ -31,7 +40,7 @@ export function Header() {
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <ThemeToggle />
-          <UserButton />
+          <UserButton isAdmin={isAdmin} />
         </div>
       </div>
     </header>
