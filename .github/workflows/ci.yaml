@@ -38,4 +38,4 @@ jobs:
       #   run: bun --bun run stylelint
 
       - name: Build
-        run: bun --bun run build
+        run: bun --bun run build:only
