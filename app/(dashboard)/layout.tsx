@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth/server";
 import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
+// import { Footer } from "@/components/layout/footer";
 import { checkDatabaseHealth } from "@/lib/db/health";
 import { rbacConfig } from "@/lib/rbac";
 
@@ -44,7 +44,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <div className="relative flex min-h-screen flex-col">
       {(isAuthenticated || allowPublicAccess) && <Header />}
       <main className="mx-auto w-full max-w-7xl px-4 py-6">{children}</main>
-      {(isAuthenticated || allowPublicAccess) && <Footer />}
+      {/* {(isAuthenticated || allowPublicAccess) && <Footer />} */}
     </div>
   );
 }
