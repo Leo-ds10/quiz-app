@@ -57,8 +57,8 @@ export const aiQuizOutputSchema = z.object({
   title: z.string().max(70).describe("A catchy, descriptive title for the quiz (max 70 chars)"),
   description: z
     .string()
-    .max(160)
-    .describe("A brief description of what the quiz covers (max 160 chars)"),
+    .max(120)
+    .describe("A brief description of what the quiz covers (max 120 chars)"),
   questions: z.array(aiQuestionSchema).describe("The quiz questions"),
 });
 
@@ -131,7 +131,7 @@ Requirements:
 - All content must be in ${languageName}
 - You may use any characters required for ${languageName}, but avoid emojis, EM dashes, novelty symbols, and smart quotes; use plain text punctuation
 - Title should be catchy and descriptive (max 70 characters)
-- Description should summarize what the quiz covers (max 160 characters)
+- Description should summarize what the quiz covers (max 120 characters)
 - Do not include properties like "language" or "difficulty" in title or description, do not spoil answers there
 
 Difficulty Guidelines (${input.difficulty}):${difficultyGuidance}
