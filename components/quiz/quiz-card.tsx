@@ -40,9 +40,7 @@ export function QuizCard({ quiz }: QuizCardProps) {
       )}
       <CardHeader className="flex-1">
         <CardTitle className="line-clamp-2">{quiz.title}</CardTitle>
-        {quiz.description && (
-          <CardDescription className="line-clamp-2">{quiz.description}</CardDescription>
-        )}
+        {quiz.description && <CardDescription>{quiz.description}</CardDescription>}
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="text-muted-foreground flex items-center gap-4 text-sm">
