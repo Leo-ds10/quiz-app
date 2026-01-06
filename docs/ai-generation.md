@@ -4,8 +4,10 @@ The Quiz App supports AI-powered quiz generation using the [Vercel AI SDK](https
 
 ## Overview
 
-- **Modular Provider System**: Supports multiple AI providers (OpenAI, OpenRouter, with extensibility to Anthropic, Google)
+- **Multi-Provider Support**: Built-in support for OpenAI, Anthropic, and Google AI
+- **Web Search**: Optional web search for up-to-date information about recent topics
 - **Structured Output**: Uses Zod schemas to ensure consistent, validated quiz output
+- **User Tracking**: Per-user cost tracking via provider dashboards
 - **Rate Limiting**: Dual-layer rate limiting (per-user and global) to control costs
 - **RBAC Protected**: Only users with `ai:quiz-generate` permission can access
 
@@ -17,12 +19,15 @@ The AI SDK and OpenAI provider are already included. No additional installation 
 
 ### 2. Set Environment Variables
 
-Add your OpenAI API key to `.env.local`:
+Add your API key to `.env.local`:
 
 ```env
 AI_PROVIDER="openai"
 AI_MODEL="gpt-5-mini"
 OPENAI_API_KEY="sk-your-api-key-here"
+
+# Optional: Enable web search for up-to-date quizzes
+AI_WEB_SEARCH_ENABLED="true"
 ```
 
 ### 3. Configure Rate Limits (Optional)
@@ -42,14 +47,14 @@ By default, `admin`, `moderator`, and `creator` roles have the `ai:quiz-generate
 
 ### AI Configuration
 
-| Variable                       | Type   | Default           | Description                                                |
-| ------------------------------ | ------ | ----------------- | ---------------------------------------------------------- |
-| `AI_PROVIDER`                  | string | `openai`          | AI provider: `openai`, `openrouter`, `anthropic`, `google` |
-| `AI_MODEL`                     | string | Provider-specific | Model to use (e.g., `gpt-5-mini`, `openai/gpt-5-mini`)     |
-| `OPENAI_API_KEY`               | string | -                 | OpenAI API key (required for OpenAI)                       |
-| `OPENROUTER_API_KEY`           | string | -                 | OpenRouter API key (required for OpenRouter)               |
-| `ANTHROPIC_API_KEY`            | string | -                 | Anthropic API key (for Anthropic)                          |
-| `GOOGLE_GENERATIVE_AI_API_KEY` | string | -                 | Google API key (for Google)                                |
+| Variable                       | Type    | Default           | Description                                           |
+| ------------------------------ | ------- | ----------------- | ----------------------------------------------------- |
+| `AI_PROVIDER`                  | string  | `openai`          | AI provider: `openai`, `anthropic`, `google`          |
+| `AI_MODEL`                     | string  | Provider-specific | Model to use (e.g., `gpt-5-mini`, `claude-haiku-4-5`) |
+| `AI_WEB_SEARCH_ENABLED`        | boolean | `false`           | Enable web search for up-to-date quiz content         |
+| `OPENAI_API_KEY`               | string  | -                 | OpenAI API key (required for OpenAI)                  |
+| `ANTHROPIC_API_KEY`            | string  | -                 | Anthropic API key (required for Anthropic)            |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | string  | -                 | Google API key (required for Google)                  |
 
 ### Rate Limiting
 
@@ -66,76 +71,67 @@ By default, `admin`, `moderator`, and `creator` roles have the `ai:quiz-generate
 
 ```env
 AI_PROVIDER="openai"
-AI_MODEL="gpt-5-mini"  # or gpt-4o, gpt-4-turbo, etc.
+AI_MODEL="gpt-5-mini"
 OPENAI_API_KEY="sk-..."
 ```
 
 Default model: `gpt-5-mini`
 
-### OpenRouter
+**Web Search**: Uses OpenAI's Responses API web search tool with configurable context size.
 
-[OpenRouter](https://openrouter.ai/) provides access to hundreds of AI models from multiple providers with a single API key.
+### Anthropic
 
 ```env
-AI_PROVIDER="openrouter"
-AI_MODEL="openai/gpt-5-mini"  # or anthropic/claude-3.5-sonnet, meta-llama/llama-3.1-405b-instruct, etc.
-OPENROUTER_API_KEY="sk-or-..."
+AI_PROVIDER="anthropic"
+AI_MODEL="claude-haiku-4-5"
+ANTHROPIC_API_KEY="sk-ant-..."
 ```
 
-Default model: `openai/gpt-5-mini`
-Get your API key from the [OpenRouter Dashboard](https://openrouter.ai/keys). See available models at [OpenRouter Models](https://openrouter.ai/docs#models).
+Default model: `claude-haiku-4-5`
+**Web Search**: Uses Anthropic's `web_search_20250305` server tool.
 
-### Adding Anthropic Support
+### Google
 
-1. Install the provider:
+```env
+AI_PROVIDER="google"
+AI_MODEL="gemini-3-flash-preview"
+GOOGLE_GENERATIVE_AI_API_KEY="..."
+```
 
-   ```bash
-   bun add @ai-sdk/anthropic
-   ```
+Default model: `gemini-3-flash-preview`
 
-2. Update `lib/ai/providers.ts`:
+**Web Search**: Uses Google Search grounding for real-time information.
 
-   ```typescript
-   import { anthropic } from '@ai-sdk/anthropic';
+## Web Search
 
-   // In getModelForProvider():
-   case "anthropic":
-     return anthropic(model);
-   ```
+Web search allows the AI to look up current information when generating quizzes. This is especially useful for:
 
-3. Set environment variables:
+- Recent movies, games, or music releases
+- Current events and news topics
+- Up-to-date sports statistics
+- Latest technology and science discoveries
 
-   ```env
-   AI_PROVIDER="anthropic"
-   AI_MODEL="claude-sonnet-4-20250514"
-   ANTHROPIC_API_KEY="sk-ant-..."
-   ```
+### Enabling Web Search
 
-### Adding Google Support
+Set the environment variable:
 
-1. Install the provider:
+```env
+AI_WEB_SEARCH_ENABLED="true"
+```
 
-   ```bash
-   bun add @ai-sdk/google
-   ```
+When enabled, users will see a toggle in the AI Quiz Generator dialog to enable/disable web search per generation. The toggle defaults to ON.
 
-2. Update `lib/ai/providers.ts`:
+### Provider-Specific Implementation
 
-   ```typescript
-   import { google } from '@ai-sdk/google';
+| Provider  | Web Search Tool       | Features                                    |
+| --------- | --------------------- | ------------------------------------------- |
+| OpenAI    | `webSearch`           | Medium context size, integrated results     |
+| Anthropic | `web_search_20250305` | Up to 3 searches per request                |
+| Google    | `googleSearch`        | Google Search grounding with real-time data |
 
-   // In getModelForProvider():
-   case "google":
-     return google(model);
-   ```
+### Cost Considerations
 
-3. Set environment variables:
-
-   ```env
-   AI_PROVIDER="google"
-   AI_MODEL="gemini-2.0-flash"
-   GOOGLE_GENERATIVE_AI_API_KEY="..."
-   ```
+Web search may incur additional costs depending on your provider. Check your provider's pricing for web search/grounding features.
 
 ## RBAC Permission
 
@@ -169,13 +165,14 @@ RBAC_DEFAULT_ROLE="creator"
 
 When generating a quiz, users can configure:
 
-| Option         | Range            | Default  | Description                     |
-| -------------- | ---------------- | -------- | ------------------------------- |
-| Theme          | 1-500            | Required | Topic/subject for the quiz      |
-| Question Count | 1-20             | 10       | Number of questions to generate |
-| Answer Count   | 2-6              | 4        | Answers per question            |
-| Difficulty     | easy/medium/hard | medium   | Question complexity level       |
-| Language       | ISO 639-1        | en       | Language for all content        |
+| Option         | Range            | Default  | Description                                     |
+| -------------- | ---------------- | -------- | ----------------------------------------------- |
+| Theme          | 1-500            | Required | Topic/subject for the quiz                      |
+| Question Count | 1-20             | 10       | Number of questions to generate                 |
+| Answer Count   | 2-6              | 4        | Answers per question                            |
+| Difficulty     | easy/medium/hard | medium   | Question complexity level                       |
+| Language       | ISO 639-1        | en       | Language for all content                        |
+| Web Search     | true/false       | true     | Use web search for up-to-date info (if enabled) |
 
 ### Difficulty Levels
 
@@ -213,6 +210,7 @@ const result = await generateQuizWithAI({
   answerCount: 4,
   difficulty: "medium",
   language: "en",
+  useWebSearch: true, // Optional: enable web search for current info
 });
 
 if (result.success) {
@@ -257,18 +255,12 @@ AI quiz generation uses external APIs that charge per request/token. To manage c
 
 1. **Set appropriate rate limits**: Start conservative and increase as needed
 2. **Monitor usage**: Check your AI provider's dashboard regularly
-3. **Use smaller models**: `gpt-5-mini` is significantly cheaper than `gpt-4`
-4. **Limit question count**: More questions = more tokens = higher cost
+3. **Track per-user costs**: User IDs are sent with each request for cost attribution
+4. **Use smaller models**: `gpt-5-mini` is significantly cheaper than `gpt-5`
+5. **Limit question count**: More questions = more tokens = higher cost
+6. **Disable web search**: If not needed, disable `AI_WEB_SEARCH_ENABLED` to reduce costs
 
-### Estimated Costs (OpenAI)
-
-| Model       | ~Cost per Quiz (10 questions) |
-| ----------- | ----------------------------- |
-| gpt-5-mini  | ~$0.002                       |
-| gpt-4o      | ~$0.02                        |
-| gpt-4-turbo | ~$0.04                        |
-
-_Actual costs vary based on prompt length and response size._
+_Actual costs vary based on prompt length, response size, and web search usage._
 
 ## Troubleshooting
 

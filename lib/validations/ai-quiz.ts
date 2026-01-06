@@ -23,6 +23,8 @@ export const aiQuizInputSchema = z.object({
   difficulty: z.enum(DIFFICULTY_LEVELS).default("medium"),
   /** Language code (ISO 639-1) */
   language: z.string().min(2).max(10).default("en"),
+  /** Whether to use web search for up-to-date information */
+  useWebSearch: z.boolean().default(true),
 });
 
 export type AIQuizInput = z.infer<typeof aiQuizInputSchema>;
@@ -103,11 +105,24 @@ function getDifficultyGuidance(difficulty: AIQuizInput["difficulty"]): string {
 /**
  * Generate the AI prompt for quiz generation.
  */
-export function generateQuizPrompt(input: AIQuizInput): string {
+export function generateQuizPrompt(input: AIQuizInput, useWebSearch: boolean = false): string {
   const languageName = getLanguageName(input.language);
   const difficultyGuidance = getDifficultyGuidance(input.difficulty);
+  const currentDate = new Date().toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
-  return `Generate a ${input.difficulty} difficulty quiz about: "${input.theme}"
+  const webSearchContext = useWebSearch
+    ? `\n\nWeb Search Available:
+- Today's date is ${currentDate}
+- Use web search to find current and accurate information about the topic
+- For recent events, new releases, or topics after your knowledge cutoff, search for up-to-date information
+- Include recent developments or news when relevant to the theme`
+    : `\n\nNote: Today's date is ${currentDate}. Base your questions on your training knowledge.`;
+
+  return `Generate a ${input.difficulty} difficulty quiz about: "${input.theme}"${webSearchContext}
 
 Requirements:
 - Generate exactly ${input.questionCount} questions

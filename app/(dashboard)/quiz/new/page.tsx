@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth/server";
+import { aiConfig } from "@/lib/ai";
 import { canCreateQuiz, canGenerateAIQuiz } from "@/lib/rbac";
 import { QuizForm } from "@/components/quiz/quiz-form";
 import { createQuiz } from "@/app/actions/quiz";
@@ -31,6 +32,7 @@ export default async function NewQuizPage() {
         onSubmit={createQuiz}
         submitLabel="Create Quiz"
         canGenerateWithAI={showAIGenerator}
+        webSearchEnabled={aiConfig.webSearchEnabled}
       />
     </div>
   );

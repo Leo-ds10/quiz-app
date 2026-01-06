@@ -6,15 +6,14 @@
  */
 
 // Supported AI providers
-export const AI_PROVIDERS = ["openai", "openrouter", "anthropic", "google"] as const;
+export const AI_PROVIDERS = ["openai", "anthropic", "google"] as const;
 export type AIProvider = (typeof AI_PROVIDERS)[number];
 
 // Default models for each provider
 export const DEFAULT_MODELS: Record<AIProvider, string> = {
   openai: "gpt-5-mini",
-  openrouter: "openai/gpt-5-mini",
-  anthropic: "claude-sonnet-4-20250514",
-  google: "gemini-2.0-flash",
+  anthropic: "claude-haiku-4-5",
+  google: "gemini-3-flash-preview",
 };
 
 /**
@@ -27,6 +26,8 @@ export interface AIConfig {
   model: string;
   /** Whether AI features are enabled (requires API key) */
   enabled: boolean;
+  /** Whether web search is enabled for AI generation */
+  webSearchEnabled: boolean;
 }
 
 /**
@@ -51,8 +52,6 @@ function hasApiKey(provider: AIProvider): boolean {
   switch (provider) {
     case "openai":
       return !!process.env.OPENAI_API_KEY;
-    case "openrouter":
-      return !!process.env.OPENROUTER_API_KEY;
     case "anthropic":
       return !!process.env.ANTHROPIC_API_KEY;
     case "google":
@@ -63,12 +62,21 @@ function hasApiKey(provider: AIProvider): boolean {
 }
 
 /**
+ * Parse boolean environment variable.
+ */
+function parseBoolEnv(value: string | undefined, defaultValue: boolean): boolean {
+  if (!value) return defaultValue;
+  return value.toLowerCase() === "true" || value === "1";
+}
+
+/**
  * Load AI configuration from environment variables.
  */
 function loadAIConfig(): AIConfig {
   const provider = parseProvider(process.env.AI_PROVIDER);
   const model = process.env.AI_MODEL?.trim() || DEFAULT_MODELS[provider];
   const enabled = hasApiKey(provider);
+  const webSearchEnabled = parseBoolEnv(process.env.AI_WEB_SEARCH_ENABLED, false);
 
   if (!enabled) {
     console.warn(`[AI] No API key found for provider "${provider}". AI features are disabled.`);
@@ -78,6 +86,7 @@ function loadAIConfig(): AIConfig {
     provider,
     model,
     enabled,
+    webSearchEnabled,
   };
 }
 
@@ -94,8 +103,8 @@ export function getAIConfigSummary(): Record<string, unknown> {
     provider: aiConfig.provider,
     model: aiConfig.model,
     enabled: aiConfig.enabled,
+    webSearchEnabled: aiConfig.webSearchEnabled,
     hasOpenAIKey: !!process.env.OPENAI_API_KEY,
-    hasOpenRouterKey: !!process.env.OPENROUTER_API_KEY,
     hasAnthropicKey: !!process.env.ANTHROPIC_API_KEY,
     hasGoogleKey: !!process.env.GOOGLE_GENERATIVE_AI_API_KEY,
   };

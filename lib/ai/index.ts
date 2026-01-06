@@ -8,4 +8,6 @@
 export { aiConfig, getAIConfigSummary, AI_PROVIDERS, DEFAULT_MODELS } from "./config";
 export type { AIConfig, AIProvider } from "./config";
 
-export { getModel, getModelForProvider } from "./providers";
+export { getModel, getModelForProvider, getModelWithTracking } from "./providers";
+
+export { getWebSearchTools, isWebSearchAvailable } from "./tools";

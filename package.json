@@ -20,9 +20,10 @@
     "test": "bun test"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.7",
+    "@ai-sdk/google": "^3.0.4",
     "@ai-sdk/openai": "^3.0.2",
     "@base-ui/react": "^1.0.0",
-    "@openrouter/ai-sdk-provider": "^1.5.4",
     "@scalar/nextjs-api-reference": "^0.9.7",
     "ai": "^6.0.5",
     "better-auth": "^1.4.10",

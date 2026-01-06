@@ -36,6 +36,8 @@ interface QuizFormProps {
   submitLabel?: string;
   /** Whether to show the "Generate with AI" button */
   canGenerateWithAI?: boolean;
+  /** Whether web search feature is enabled for AI generation */
+  webSearchEnabled?: boolean;
 }
 
 const defaultQuestion: QuestionFormData = {
@@ -52,6 +54,7 @@ export function QuizForm({
   onSubmit,
   submitLabel = "Create Quiz",
   canGenerateWithAI = false,
+  webSearchEnabled = false,
 }: QuizFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -150,7 +153,12 @@ export function QuizForm({
               <CardTitle>Quiz Details</CardTitle>
               <CardDescription>Basic information about your quiz</CardDescription>
             </div>
-            {canGenerateWithAI && <AIQuizGenerator onGenerated={handleAIGenerated} />}
+            {canGenerateWithAI && (
+              <AIQuizGenerator
+                onGenerated={handleAIGenerated}
+                webSearchEnabled={webSearchEnabled}
+              />
+            )}
           </div>
         </CardHeader>
         <CardContent className="space-y-4">

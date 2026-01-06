@@ -7,10 +7,10 @@
  * Protected by RBAC and rate limiting.
  */
 
-import { generateObject } from "ai";
+import { generateObject, generateText, Output, stepCountIs } from "ai";
 import { auth } from "@/lib/auth/server";
 import { headers } from "next/headers";
-import { getModel, aiConfig } from "@/lib/ai";
+import { getModelWithTracking, aiConfig, getWebSearchTools, isWebSearchAvailable } from "@/lib/ai";
 import { canGenerateAIQuiz } from "@/lib/rbac/permissions";
 import { checkAIGenerationRateLimit, type AIRateLimitResult } from "@/lib/rate-limit";
 import {
@@ -113,17 +113,54 @@ export async function generateQuizWithAI(input: AIQuizInput): Promise<GenerateQu
     }
 
     // 6. Generate quiz with AI
-    const prompt = generateQuizPrompt(validatedInput.data);
-    const model = getModel();
+    const useWebSearch = validatedInput.data.useWebSearch && isWebSearchAvailable();
+    const prompt = generateQuizPrompt(validatedInput.data, useWebSearch);
+    const model = getModelWithTracking(aiConfig.provider, aiConfig.model, session.user.id);
 
-    const result = await generateObject({
-      model,
-      schema: aiQuizOutputSchema,
-      prompt,
-    });
+    // Common options for telemetry and user tracking
+    const providerOptions =
+      aiConfig.provider === "openai" ? { openai: { user: session.user.id } } : undefined;
+    const telemetry = {
+      isEnabled: true,
+      functionId: "quiz-generation",
+      metadata: {
+        userId: session.user.id,
+        quizTheme: validatedInput.data.theme,
+        difficulty: validatedInput.data.difficulty,
+        questionCount: String(validatedInput.data.questionCount),
+        webSearchEnabled: String(useWebSearch),
+      },
+    };
+
+    let quizOutput: AIQuizOutput;
+
+    if (useWebSearch) {
+      // Use generateText with Output.object() for web search support
+      const tools = getWebSearchTools(aiConfig.provider);
+      const result = await generateText({
+        model,
+        tools,
+        output: Output.object({ schema: aiQuizOutputSchema }),
+        prompt,
+        providerOptions,
+        experimental_telemetry: telemetry,
+        stopWhen: stepCountIs(5), // Allow up to 5 steps for tool calls + output
+      });
+      quizOutput = result.output as AIQuizOutput;
+    } else {
+      // Use generateObject directly when no tools needed (more efficient)
+      const result = await generateObject({
+        model,
+        schema: aiQuizOutputSchema,
+        prompt,
+        providerOptions,
+        experimental_telemetry: telemetry,
+      });
+      quizOutput = result.object;
+    }
 
     // 7. Validate the generated output
-    if (!result.object) {
+    if (!quizOutput) {
       return {
         success: false,
         error: "AI failed to generate a valid quiz. Please try again.",
@@ -132,7 +169,7 @@ export async function generateQuizWithAI(input: AIQuizInput): Promise<GenerateQu
     }
 
     // Validate question and answer counts
-    const quiz = result.object;
+    const quiz = quizOutput;
     if (quiz.questions.length !== validatedInput.data.questionCount) {
       console.warn(
         `[AI] Generated ${quiz.questions.length} questions, expected ${validatedInput.data.questionCount}`,

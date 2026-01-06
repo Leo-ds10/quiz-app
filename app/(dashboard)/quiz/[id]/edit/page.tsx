@@ -1,6 +1,7 @@
 import { redirect, notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth/server";
+import { aiConfig } from "@/lib/ai";
 import { canEditQuiz, canGenerateAIQuiz } from "@/lib/rbac";
 import { getQuizById } from "@/lib/db/queries/quiz";
 import { QuizForm } from "@/components/quiz/quiz-form";
@@ -74,6 +75,7 @@ export default async function EditQuizPage({ params }: PageProps) {
         onSubmit={handleSubmit}
         submitLabel="Save Changes"
         canGenerateWithAI={showAIGenerator}
+        webSearchEnabled={aiConfig.webSearchEnabled}
       />
     </div>
   );

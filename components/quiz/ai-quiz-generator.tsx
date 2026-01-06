@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -41,13 +42,15 @@ import type { QuizFormData } from "@/lib/validations/quiz";
 interface AIQuizGeneratorProps {
   /** Callback when quiz is successfully generated */
   onGenerated: (data: Partial<QuizFormData>) => void;
+  /** Whether web search feature is enabled (controlled by env variable) */
+  webSearchEnabled?: boolean;
 }
 
 // ============================================================================
 // Component
 // ============================================================================
 
-export function AIQuizGenerator({ onGenerated }: AIQuizGeneratorProps) {
+export function AIQuizGenerator({ onGenerated, webSearchEnabled = false }: AIQuizGeneratorProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -57,6 +60,7 @@ export function AIQuizGenerator({ onGenerated }: AIQuizGeneratorProps) {
   const [answerCount, setAnswerCount] = useState(4);
   const [difficulty, setDifficulty] = useState<AIQuizInput["difficulty"]>("medium");
   const [language, setLanguage] = useState("en");
+  const [useWebSearch, setUseWebSearch] = useState(true);
 
   const handleGenerate = () => {
     if (!theme.trim()) {
@@ -71,6 +75,7 @@ export function AIQuizGenerator({ onGenerated }: AIQuizGeneratorProps) {
         answerCount,
         difficulty,
         language,
+        useWebSearch: webSearchEnabled && useWebSearch,
       });
 
       if (!result.success) {
@@ -233,6 +238,26 @@ export function AIQuizGenerator({ onGenerated }: AIQuizGeneratorProps) {
               </Select>
             </div>
           </div>
+
+          {/* Web Search Toggle - only shown when enabled via env variable */}
+          {webSearchEnabled && (
+            <div className="flex items-center justify-between rounded-lg border p-3">
+              <div className="space-y-0.5">
+                <Label htmlFor="ai-web-search" className="text-sm font-medium">
+                  Use web search
+                </Label>
+                <p className="text-muted-foreground text-xs">
+                  Search the web for up-to-date information about recent topics
+                </p>
+              </div>
+              <Switch
+                id="ai-web-search"
+                checked={useWebSearch}
+                onCheckedChange={setUseWebSearch}
+                disabled={isPending}
+              />
+            </div>
+          )}
         </div>
 
         <DialogFooter>
